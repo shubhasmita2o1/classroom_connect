@@ -75,6 +75,7 @@ export default function FacultyDashboard() {
           .from('students')
           .select('id, roll_number, full_name, is_active')
           .eq('is_active', true)
+          .eq('is_archived', false)
           .order('roll_number', { ascending: true })
 
         if (!studentErr && students) {
@@ -130,6 +131,7 @@ export default function FacultyDashboard() {
               .from('students')
               .select('id, roll_number, full_name, is_active')
               .eq('is_active', true)
+              .eq('is_archived', false)
               .order('roll_number', { ascending: true }),
             supabase
               .from('attendance_sessions')
@@ -165,27 +167,27 @@ export default function FacultyDashboard() {
 
   // Load existing records for the current session
   const loadSessionRecords = async (sessionId) => {
-    try {
-      const { data, error } = await supabase
-        .from('attendance_records')
-        .select('student_id, status')
-        .eq('session_id', sessionId)
+    const { data, error } = await supabase
+      .from('attendance_records')
+      .select('student_id, status')
+      .eq('session_id', sessionId)
 
-      if (!error && data) {
-        const map = {}
-        data.forEach((r) => {
-          map[r.student_id] = r.status
-        })
-        setAttendanceMap(map)
-      }
-    } catch (err) {
-      console.error('Error loading attendance records:', err)
+    if (error) {
+      throw error
     }
+
+    const map = {}
+    ;(data || []).forEach((r) => {
+      map[r.student_id] = r.status
+    })
+    setAttendanceMap(map)
+    return map
   }
 
   // 1. Create Draft Session
   const handleCreateDraftSession = async () => {
     if (!facultyRecord || !sessionSubject) {
+      setStatusMessage(null)
       setStatusError('Please ensure a faculty record and subject are selected.')
       return
     }
@@ -229,8 +231,9 @@ export default function FacultyDashboard() {
       setStatusMessage(
         `Draft Session #${nextNumber} created for ${sessionSubject.subject_code} (${sessionSubject.subject_name}). Next: Start session to record attendance.`
       )
-      await loadFacultyData()
+      await loadFacultyData(false)
     } catch (err) {
+      setStatusMessage(null)
       setStatusError(`Error creating session: ${err.message}`)
     } finally {
       setBusy(false)
@@ -254,8 +257,9 @@ export default function FacultyDashboard() {
 
       setActiveSession((prev) => ({ ...prev, status: 'in_progress', started_at: new Date().toISOString() }))
       setStatusMessage('Attendance session started. You can now mark student attendance.')
-      await loadFacultyData()
+      await loadFacultyData(false)
     } catch (err) {
+      setStatusMessage(null)
       setStatusError(`Failed to start session: ${err.message}`)
     } finally {
       setBusy(false)
@@ -264,36 +268,40 @@ export default function FacultyDashboard() {
 
   // 3. Mark Single Student
   const handleMarkStudent = async (studentId, status) => {
-    if (!activeSession || activeSession.status === 'finalized' || !user) return
+    if (!activeSession || activeSession.status !== 'in_progress' || !user) return
 
     setBusy(true)
     setStatusError(null)
+    setStatusMessage(null)
 
     try {
-      // Upsert attendance record
       const { error } = await supabase.from('attendance_records').upsert(
         {
           session_id: activeSession.id,
           student_id: studentId,
-          status: status,
+          status,
           marked_by: user.id,
         },
-        { onConflict: 'session_id, student_id' }
+        { onConflict: 'session_id,student_id' }
       )
 
       if (error) throw error
 
-      setAttendanceMap((prev) => ({ ...prev, [studentId]: status }))
+      await loadSessionRecords(activeSession.id)
+      const studentInfo = studentsRoster.find((s) => s.id === studentId)
+      const label = studentInfo ? `${studentInfo.roll_number} (${studentInfo.full_name})` : 'Student'
+      setStatusMessage(`${label} marked ${status.toUpperCase()}.`)
     } catch (err) {
+      setStatusMessage(null)
       setStatusError(`Failed to record attendance: ${err.message}`)
     } finally {
       setBusy(false)
     }
   }
 
-  // Quick: Mark All Students Present
+  // Quick: Mark All Students Present / Absent
   const handleMarkAll = async (status) => {
-    if (!activeSession || activeSession.status === 'finalized' || !user || !studentsRoster.length) return
+    if (!activeSession || activeSession.status !== 'in_progress' || !user || !studentsRoster.length) return
 
     setBusy(true)
     setStatusError(null)
@@ -303,23 +311,20 @@ export default function FacultyDashboard() {
       const records = studentsRoster.map((student) => ({
         session_id: activeSession.id,
         student_id: student.id,
-        status: status,
+        status,
         marked_by: user.id,
       }))
 
       const { error } = await supabase.from('attendance_records').upsert(records, {
-        onConflict: 'session_id, student_id',
+        onConflict: 'session_id,student_id',
       })
 
       if (error) throw error
 
-      const newMap = {}
-      studentsRoster.forEach((s) => {
-        newMap[s.id] = status
-      })
-      setAttendanceMap(newMap)
-      setStatusMessage(`All ${studentsRoster.length} students marked ${status.toUpperCase()}.`)
+      await loadSessionRecords(activeSession.id)
+      setStatusMessage(`All ${studentsRoster.length} active students marked ${status.toUpperCase()}.`)
     } catch (err) {
+      setStatusMessage(null)
       setStatusError(`Error marking bulk attendance: ${err.message}`)
     } finally {
       setBusy(false)
@@ -334,6 +339,7 @@ export default function FacultyDashboard() {
     const totalCount = studentsRoster.length
 
     if (markedCount < totalCount) {
+      setStatusMessage(null)
       setStatusError(
         `Roster validation requirement: Attendance must be marked for all ${totalCount} active students before finalization. Currently marked: ${markedCount}.`
       )
@@ -363,8 +369,9 @@ export default function FacultyDashboard() {
       setStatusMessage(
         `Session successfully finalized and locked! Verified against all ${totalCount} active students.`
       )
-      await loadFacultyData()
+      await loadFacultyData(false)
     } catch (err) {
+      setStatusMessage(null)
       setStatusError(`Finalization failed: ${err.message}`)
     } finally {
       setBusy(false)
@@ -374,9 +381,14 @@ export default function FacultyDashboard() {
   // Select an existing session to resume or view
   const handleSelectSession = async (sess) => {
     setActiveSession(sess)
-    await loadSessionRecords(sess.id)
-    setStatusMessage(`Loaded session #${sess.session_number} (${sess.status})`)
     setStatusError(null)
+    try {
+      await loadSessionRecords(sess.id)
+      setStatusMessage(`Loaded session #${sess.session_number} (${sess.status})`)
+    } catch (err) {
+      setStatusMessage(null)
+      setStatusError(`Failed to load session attendance records: ${err.message}`)
+    }
   }
 
   const markedCount = Object.keys(attendanceMap).length
