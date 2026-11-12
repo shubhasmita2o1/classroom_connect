@@ -57,21 +57,23 @@ export default function StudentDashboard() {
             )
           `)
           .eq('student_id', student.id)
+          .eq('attendance_sessions.status', 'finalized')
           .order('marked_at', { ascending: false })
 
         if (!recErr && records) {
-          setAttendanceRecords(records)
+          setAttendanceRecords(records.filter((r) => r.attendance_sessions?.status === 'finalized'))
         }
+      }
 
-        // 3. Fetch active subjects
-        const { data: subs, error: subsErr } = await supabase
-          .from('subjects')
-          .select('id, subject_code, subject_name')
-          .eq('is_active', true)
+      // 3. Fetch active curriculum subjects ordered by subject code
+      const { data: subs, error: subsErr } = await supabase
+        .from('subjects')
+        .select('id, subject_code, subject_name, description')
+        .eq('is_active', true)
+        .order('subject_code', { ascending: true })
 
-        if (!subsErr && subs) {
-          setSubjectsList(subs)
-        }
+      if (!subsErr && subs) {
+        setSubjectsList(subs)
       }
     } catch (err) {
       console.error('Error loading student attendance:', err)
@@ -118,21 +120,32 @@ export default function StudentDashboard() {
                 )
               `)
               .eq('student_id', student.id)
+              .eq('attendance_sessions.status', 'finalized')
               .order('marked_at', { ascending: false }),
             supabase
               .from('subjects')
-              .select('id, subject_code, subject_name')
+              .select('id, subject_code, subject_name, description')
               .eq('is_active', true)
+              .order('subject_code', { ascending: true })
           ])
 
           if (!ignore) {
-            if (records) setAttendanceRecords(records)
+            if (records) {
+              setAttendanceRecords(records.filter((r) => r.attendance_sessions?.status === 'finalized'))
+            }
             if (subs) setSubjectsList(subs)
-            setLoading(false)
           }
+        } else if (!ignore) {
+          const { data: subs } = await supabase
+            .from('subjects')
+            .select('id, subject_code, subject_name, description')
+            .eq('is_active', true)
+            .order('subject_code', { ascending: true })
+          if (!ignore && subs) setSubjectsList(subs)
         }
       } catch (err) {
         console.error(err)
+      } finally {
         if (!ignore) setLoading(false)
       }
     }
@@ -141,15 +154,18 @@ export default function StudentDashboard() {
     return () => { ignore = true }
   }, [user])
 
-  // Aggregate stats
-  const totalSessions = attendanceRecords.length
-  const totalPresent = attendanceRecords.filter((r) => r.status === 'present').length
-  const totalAbsent = attendanceRecords.filter((r) => r.status === 'absent').length
-  const attendancePercentage = totalSessions > 0 ? Math.round((totalPresent / totalSessions) * 100) : 100
+  // Aggregate stats (calculated strictly from finalized sessions)
+  const finalizedRecords = attendanceRecords.filter(
+    (r) => r.attendance_sessions?.status === 'finalized'
+  )
+  const totalSessions = finalizedRecords.length
+  const totalPresent = finalizedRecords.filter((r) => r.status === 'present').length
+  const totalAbsent = finalizedRecords.filter((r) => r.status === 'absent').length
+  const attendancePercentage = totalSessions > 0 ? Math.round((totalPresent / totalSessions) * 100) : null
 
   // Subject-wise stats calculation
   const subjectStats = subjectsList.map((subject) => {
-    const subRecords = attendanceRecords.filter(
+    const subRecords = finalizedRecords.filter(
       (r) => r.attendance_sessions?.subjects?.id === subject.id
     )
     const subTotal = subRecords.length
@@ -257,7 +273,7 @@ export default function StudentDashboard() {
             </div>
             <div className="mt-3">
               <div className={`text-3xl font-extrabold ${getPctColor(attendancePercentage)}`}>
-                {loading ? '...' : `${attendancePercentage}%`}
+                {loading ? '...' : attendancePercentage !== null ? `${attendancePercentage}%` : '—'}
               </div>
               <div className="mt-2">{getStatusBadge(attendancePercentage)}</div>
             </div>
@@ -319,7 +335,7 @@ export default function StudentDashboard() {
         </div>
 
         {/* Attendance Regulation Notice */}
-        {attendancePercentage < 75 && totalSessions > 0 && (
+        {attendancePercentage !== null && attendancePercentage < 75 && totalSessions > 0 && (
           <div className="mt-6 rounded-xl border border-amber-900/60 bg-amber-950/30 p-4 text-xs text-amber-200">
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 shrink-0 text-amber-400" />
@@ -376,7 +392,10 @@ export default function StudentDashboard() {
                           {sub.subject_code}
                         </td>
                         <td className="px-6 py-4 font-medium text-slate-200">
-                          {sub.subject_name}
+                          <div>{sub.subject_name}</div>
+                          {sub.description && (
+                            <p className="mt-0.5 text-xs text-slate-500">{sub.description}</p>
+                          )}
                         </td>
                         <td className="px-6 py-4 text-center font-mono text-xs">
                           {sub.total}
@@ -386,7 +405,7 @@ export default function StudentDashboard() {
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span className={`font-mono text-xs font-bold ${getPctColor(sub.percentage)}`}>
-                            {sub.percentage !== null ? `${sub.percentage}%` : 'N/A'}
+                            {sub.percentage !== null ? `${sub.percentage}%` : '—'}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
@@ -426,14 +445,14 @@ export default function StudentDashboard() {
                         Loading attendance history...
                       </td>
                     </tr>
-                  ) : attendanceRecords.length === 0 ? (
+                  ) : finalizedRecords.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="px-6 py-6 text-center text-slate-500">
                         No finalized attendance records recorded yet.
                       </td>
                     </tr>
                   ) : (
-                    attendanceRecords.map((rec) => (
+                    finalizedRecords.map((rec) => (
                       <tr key={rec.id} className="hover:bg-slate-800/40 transition-colors">
                         <td className="px-6 py-3.5 font-medium text-slate-200">
                           {rec.attendance_sessions?.session_date || 'N/A'}

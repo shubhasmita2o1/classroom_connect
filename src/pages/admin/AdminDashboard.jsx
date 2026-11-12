@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Navbar from '../../components/Navbar'
 import AlertBanner from '../../components/AlertBanner'
 import DeleteAccountModal from '../../components/DeleteAccountModal'
+import AcademicManagementPanel from '../../components/AcademicManagementPanel'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import {
@@ -388,7 +389,7 @@ export default function AdminDashboard() {
 
         {/* Navigation Tabs */}
         <div className="mt-6 border-b border-slate-800">
-          <nav className="flex space-x-6 text-sm font-medium">
+          <nav className="flex space-x-6 overflow-x-auto whitespace-nowrap text-sm font-medium">
             <button
               onClick={() => setActiveTab('overview')}
               className={`pb-3 border-b-2 transition-colors ${
@@ -420,6 +421,17 @@ export default function AdminDashboard() {
             >
               <Users className="h-4 w-4" />
               <span>Roster & Users</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('academics')}
+              className={`pb-3 border-b-2 transition-colors flex items-center gap-1.5 ${
+                activeTab === 'academics'
+                  ? 'border-blue-500 text-blue-400'
+                  : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <BookOpen className="h-4 w-4" />
+              <span>Academic Management</span>
             </button>
             <button
               onClick={() => setActiveTab('audit')}
@@ -976,6 +988,11 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* TAB 5: ACADEMIC MANAGEMENT */}
+        {activeTab === 'academics' && (
+          <AcademicManagementPanel onDataChanged={loadStats} />
         )}
       </main>
 

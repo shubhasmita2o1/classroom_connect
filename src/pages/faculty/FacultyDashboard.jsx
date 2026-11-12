@@ -54,19 +54,20 @@ export default function FacultyDashboard() {
       setFacultyRecord(faculty)
 
       if (faculty) {
-        // 2. Fetch allocated subjects
+        // 2. Fetch allocated active subjects for this faculty member
         const { data: allocations, error: allocErr } = await supabase
           .from('faculty_subjects')
-          .select('subject_id, subjects(id, subject_code, subject_name, description)')
+          .select('subject_id, subjects(id, subject_code, subject_name, description, is_active)')
           .eq('faculty_id', faculty.id)
           .eq('is_active', true)
 
         if (!allocErr && allocations) {
-          const subjects = allocations.map((a) => a.subjects).filter(Boolean)
+          const subjects = allocations
+            .map((a) => a.subjects)
+            .filter((s) => s && s.is_active !== false)
+            .sort((a, b) => (a.subject_code || '').localeCompare(b.subject_code || ''))
           setAllocatedSubjects(subjects)
-          if (subjects.length > 0) {
-            setSessionSubject((prev) => prev || subjects[0])
-          }
+          setSessionSubject((prev) => subjects.find((s) => s.id === prev?.id) || subjects[0] || null)
         }
 
         // 3. Fetch active classroom students roster
@@ -122,7 +123,7 @@ export default function FacultyDashboard() {
           ] = await Promise.all([
             supabase
               .from('faculty_subjects')
-              .select('subject_id, subjects(id, subject_code, subject_name, description)')
+              .select('subject_id, subjects(id, subject_code, subject_name, description, is_active)')
               .eq('faculty_id', faculty.id)
               .eq('is_active', true),
             supabase
@@ -140,19 +141,20 @@ export default function FacultyDashboard() {
 
           if (!ignore) {
             if (allocations) {
-              const subjects = allocations.map((a) => a.subjects).filter(Boolean)
+              const subjects = allocations
+                .map((a) => a.subjects)
+                .filter((s) => s && s.is_active !== false)
+                .sort((a, b) => (a.subject_code || '').localeCompare(b.subject_code || ''))
               setAllocatedSubjects(subjects)
-              if (subjects.length > 0) {
-                setSessionSubject((prev) => prev || subjects[0])
-              }
+              setSessionSubject((prev) => subjects.find((s) => s.id === prev?.id) || subjects[0] || null)
             }
             if (students) setStudentsRoster(students)
             if (sessions) setRecentSessions(sessions)
-            setLoadingInitial(false)
           }
         }
       } catch (err) {
         console.error(err)
+      } finally {
         if (!ignore) setLoadingInitial(false)
       }
     }
@@ -415,7 +417,7 @@ export default function FacultyDashboard() {
 
             <button
               type="button"
-              onClick={loadFacultyData}
+              onClick={() => loadFacultyData(false)}
               className="inline-flex items-center gap-1.5 self-start rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
             >
               <RefreshCw className="h-3.5 w-3.5" />
