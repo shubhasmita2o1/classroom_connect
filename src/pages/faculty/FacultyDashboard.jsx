@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Navbar from '../../components/Navbar'
 import AlertBanner from '../../components/AlertBanner'
+import DeleteDraftSessionModal from '../../components/DeleteDraftSessionModal'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import {
@@ -15,6 +16,7 @@ import {
   PlusCircle,
   FileCheck2,
   UserCheck,
+  Trash2,
 } from 'lucide-react'
 
 export default function FacultyDashboard() {
@@ -32,7 +34,13 @@ export default function FacultyDashboard() {
   const [attendanceMap, setAttendanceMap] = useState({}) // studentId -> 'present' | 'absent'
   const [busy, setBusy] = useState(false)
   const [statusMessage, setStatusMessage] = useState(null)
+  const [statusSuccess, setStatusSuccess] = useState(null)
   const [statusError, setStatusError] = useState(null)
+
+  // Draft deletion modal state
+  const [deleteTargetSession, setDeleteTargetSession] = useState(null)
+  const [deletingDraft, setDeletingDraft] = useState(false)
+  const [deleteModalError, setDeleteModalError] = useState(null)
 
   // Sessions History
   const [recentSessions, setRecentSessions] = useState([])
@@ -194,6 +202,7 @@ export default function FacultyDashboard() {
 
     setBusy(true)
     setStatusError(null)
+    setStatusSuccess(null)
     setStatusMessage('Creating draft attendance session...')
 
     try {
@@ -246,6 +255,7 @@ export default function FacultyDashboard() {
 
     setBusy(true)
     setStatusError(null)
+    setStatusSuccess(null)
     setStatusMessage('Starting attendance session...')
 
     try {
@@ -272,6 +282,7 @@ export default function FacultyDashboard() {
 
     setBusy(true)
     setStatusError(null)
+    setStatusSuccess(null)
     setStatusMessage(null)
 
     try {
@@ -305,6 +316,7 @@ export default function FacultyDashboard() {
 
     setBusy(true)
     setStatusError(null)
+    setStatusSuccess(null)
     setStatusMessage(`Marking all active students as ${status.toUpperCase()}...`)
 
     try {
@@ -352,6 +364,7 @@ export default function FacultyDashboard() {
 
     setBusy(true)
     setStatusError(null)
+    setStatusSuccess(null)
     setStatusMessage('Validating roster and finalizing session...')
 
     try {
@@ -382,12 +395,64 @@ export default function FacultyDashboard() {
   const handleSelectSession = async (sess) => {
     setActiveSession(sess)
     setStatusError(null)
+    setStatusSuccess(null)
     try {
       await loadSessionRecords(sess.id)
       setStatusMessage(`Loaded session #${sess.session_number} (${sess.status})`)
     } catch (err) {
       setStatusMessage(null)
       setStatusError(`Failed to load session attendance records: ${err.message}`)
+    }
+  }
+
+  // Open confirmation modal for deleting a draft session
+  const handleRequestDeleteDraft = (e, sess) => {
+    e.stopPropagation()
+    if (!sess || sess.status !== 'draft' || deletingDraft) return
+    setDeleteModalError(null)
+    setDeleteTargetSession(sess)
+  }
+
+  // Confirm transactional draft session deletion via server-side RPC
+  const handleConfirmDeleteDraft = async (sessionToDelete) => {
+    if (!sessionToDelete || deletingDraft) return
+
+    setDeletingDraft(true)
+    setDeleteModalError(null)
+    setStatusError(null)
+    setStatusSuccess(null)
+    setStatusMessage(null)
+
+    try {
+      const { data, error } = await supabase.rpc('delete_draft_attendance_session', {
+        target_session_id: sessionToDelete.id,
+      })
+
+      if (error) throw error
+
+      if (activeSession?.id === sessionToDelete.id) {
+        setActiveSession(null)
+        setAttendanceMap({})
+      }
+
+      setDeleteTargetSession(null)
+      const subjectLabel = sessionToDelete.subjects?.subject_code || 'Subject'
+      const deletedDraftCount = data?.deletedDraftRecordsCount || 0
+      setStatusSuccess(
+        `Draft Session #${sessionToDelete.session_number} (${subjectLabel}, ${sessionToDelete.session_date}) deleted permanently${
+          deletedDraftCount > 0
+            ? ` along with ${deletedDraftCount} draft attendance record${deletedDraftCount > 1 ? 's' : ''}`
+            : ''
+        }.`
+      )
+      await loadFacultyData(false)
+    } catch (err) {
+      const msg = err?.message || 'Unable to delete draft session.'
+      setDeleteModalError(`Failed to delete draft session: ${msg}`)
+      setStatusError(`Failed to delete draft session: ${msg}`)
+      await loadFacultyData(false)
+    } finally {
+      setDeletingDraft(false)
     }
   }
 
@@ -477,6 +542,13 @@ export default function FacultyDashboard() {
               type="error"
               message={statusError}
               onClose={() => setStatusError(null)}
+            />
+          )}
+          {statusSuccess && (
+            <AlertBanner
+              type="success"
+              message={statusSuccess}
+              onClose={() => setStatusSuccess(null)}
             />
           )}
           {statusMessage && (
@@ -743,17 +815,33 @@ export default function FacultyDashboard() {
                           : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
                       }`}
                     >
-                      <div className="flex items-center justify-between text-xs font-semibold text-white">
-                        <span>{sess.subjects?.subject_code || 'Subject'}</span>
-                        <span
-                          className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
-                            sess.status === 'finalized'
-                              ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                              : 'bg-amber-950 text-amber-400 border border-amber-800'
-                          }`}
-                        >
-                          {sess.status}
-                        </span>
+                      <div className="flex items-center justify-between gap-2 text-xs font-semibold text-white">
+                        <span className="truncate">{sess.subjects?.subject_code || 'Subject'}</span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span
+                            className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
+                              sess.status === 'finalized'
+                                ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                                : sess.status === 'in_progress'
+                                ? 'bg-blue-950 text-blue-400 border border-blue-800'
+                                : 'bg-amber-950 text-amber-400 border border-amber-800'
+                            }`}
+                          >
+                            {sess.status.replace('_', ' ')}
+                          </span>
+                          {sess.status === 'draft' && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleRequestDeleteDraft(e, sess)}
+                              disabled={busy || deletingDraft}
+                              title="Delete Draft Session"
+                              aria-label={`Delete draft session ${sess.subjects?.subject_code || ''} #${sess.session_number}`}
+                              className="inline-flex h-6 w-6 items-center justify-center rounded border border-rose-900/70 bg-rose-950/50 text-rose-400 hover:bg-rose-900/70 hover:text-rose-200 disabled:opacity-50 transition-colors"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
                       <div className="mt-1 flex items-center justify-between text-[11px] text-slate-400">
                         <span>Date: {sess.session_date}</span>
@@ -767,6 +855,20 @@ export default function FacultyDashboard() {
           </div>
         </div>
       </main>
+
+      <DeleteDraftSessionModal
+        isOpen={Boolean(deleteTargetSession)}
+        session={deleteTargetSession}
+        deleting={deletingDraft}
+        error={deleteModalError}
+        onClose={() => {
+          if (!deletingDraft) {
+            setDeleteTargetSession(null)
+            setDeleteModalError(null)
+          }
+        }}
+        onConfirm={handleConfirmDeleteDraft}
+      />
     </div>
   )
 }
