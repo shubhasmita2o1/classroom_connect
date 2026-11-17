@@ -3,7 +3,7 @@ import { Megaphone, X, Loader2, AlertCircle, Calendar, BookOpen, Tag, Flame } fr
 import {
   NOTIFICATION_CATEGORIES,
   createAnnouncement,
-} from '../services/notificationService'
+} from '../services/notificationService.js'
 
 export default function CreateAnnouncementModal({
   isOpen,
@@ -91,23 +91,23 @@ export default function CreateAnnouncementModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#252B27]/40 p-4 backdrop-blur-sm overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="create-announcement-title"
     >
-      <div className="w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl my-8">
+      <div className="w-full max-w-lg rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-xl my-8">
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-start justify-between border-b border-[#E8ECE7] pb-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EAF3ED] text-[#145C3A]">
               <Megaphone className="h-5 w-5" />
             </div>
             <div>
-              <h3 id="create-announcement-title" className="text-base font-bold text-white">
+              <h3 id="create-announcement-title" className="text-base font-bold text-[#252B27]">
                 Publish Announcement
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#78817B]">
                 Post notices and updates visible to students
               </p>
             </div>
@@ -117,7 +117,7 @@ export default function CreateAnnouncementModal({
             type="button"
             onClick={handleClose}
             disabled={submitting}
-            className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white disabled:opacity-50"
+            className="rounded-lg p-1 text-[#78817B] hover:bg-[#F5F6F3] hover:text-[#252B27] disabled:opacity-50"
             aria-label="Close modal"
           >
             <X className="h-5 w-5" />
@@ -129,17 +129,17 @@ export default function CreateAnnouncementModal({
           {error && (
             <div
               role="alert"
-              className="flex items-center gap-2 rounded-lg border border-rose-800/80 bg-rose-950/60 p-3 text-xs text-rose-200"
+              className="flex items-center gap-2 rounded-xl border border-red-200 bg-[#FEF2F2] p-3 text-xs text-[#991B1B]"
             >
-              <AlertCircle className="h-4 w-4 shrink-0 text-rose-400" />
+              <AlertCircle className="h-4 w-4 shrink-0 text-[#DC2626]" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Title input */}
           <div>
-            <label htmlFor="announcement-title" className="block text-xs font-semibold text-slate-300">
-              Announcement Title <span className="text-rose-400">*</span>
+            <label htmlFor="announcement-title" className="block text-xs font-semibold text-[#78817B] uppercase tracking-wider">
+              Announcement Title <span className="text-[#DC2626]">*</span>
             </label>
             <input
               id="announcement-title"
@@ -150,9 +150,9 @@ export default function CreateAnnouncementModal({
               maxLength={120}
               required
               disabled={submitting}
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1.5 w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 text-xs sm:text-sm text-[#252B27] placeholder-[#9CA3AF] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A]"
             />
-            <span className="mt-1 block text-right text-[10px] text-slate-500">
+            <span className="mt-1 block text-right text-[10px] text-[#78817B]">
               {title.length}/120
             </span>
           </div>
@@ -160,16 +160,16 @@ export default function CreateAnnouncementModal({
           {/* Category & Priority Row */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <label htmlFor="announcement-category" className="flex items-center gap-1 text-xs font-semibold text-slate-300">
-                <Tag className="h-3 w-3 text-slate-400" />
-                <span>Category</span> <span className="text-rose-400">*</span>
+              <label htmlFor="announcement-category" className="flex items-center gap-1 text-xs font-semibold text-[#78817B] uppercase tracking-wider">
+                <Tag className="h-3 w-3 text-[#78817B]" />
+                <span>Category</span> <span className="text-[#DC2626]">*</span>
               </label>
               <select
                 id="announcement-category"
                 value={category}
                 onChange={handleCategoryChange}
                 disabled={submitting}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1.5 w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 text-xs sm:text-sm text-[#252B27] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A]"
               >
                 {NOTIFICATION_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -180,8 +180,8 @@ export default function CreateAnnouncementModal({
             </div>
 
             <div>
-              <label htmlFor="announcement-priority" className="flex items-center gap-1 text-xs font-semibold text-slate-300">
-                <Flame className="h-3 w-3 text-slate-400" />
+              <label htmlFor="announcement-priority" className="flex items-center gap-1 text-xs font-semibold text-[#78817B] uppercase tracking-wider">
+                <Flame className="h-3 w-3 text-[#78817B]" />
                 <span>Priority</span>
               </label>
               <select
@@ -189,7 +189,7 @@ export default function CreateAnnouncementModal({
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
                 disabled={submitting}
-                className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1.5 w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 text-xs sm:text-sm text-[#252B27] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A]"
               >
                 <option value="Normal">Normal</option>
                 <option value="High">High</option>
@@ -201,8 +201,8 @@ export default function CreateAnnouncementModal({
 
           {/* Associated Subject (Optional) */}
           <div>
-            <label htmlFor="announcement-subject" className="flex items-center gap-1 text-xs font-semibold text-slate-300">
-              <BookOpen className="h-3 w-3 text-slate-400" />
+            <label htmlFor="announcement-subject" className="flex items-center gap-1 text-xs font-semibold text-[#78817B] uppercase tracking-wider">
+              <BookOpen className="h-3 w-3 text-[#78817B]" />
               <span>Target Course / Subject (Optional)</span>
             </label>
             <select
@@ -210,7 +210,7 @@ export default function CreateAnnouncementModal({
               value={subjectId}
               onChange={(e) => setSubjectId(e.target.value)}
               disabled={submitting}
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1.5 w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 text-xs sm:text-sm text-[#252B27] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A]"
             >
               <option value="">General (All Students / Classroom Wide)</option>
               {subjects.map((sub) => (
@@ -219,15 +219,15 @@ export default function CreateAnnouncementModal({
                 </option>
               ))}
             </select>
-            <span className="mt-1 block text-[10px] text-slate-500">
+            <span className="mt-1 block text-[10px] text-[#78817B]">
               Leave as General for institution or classroom-wide announcements.
             </span>
           </div>
 
           {/* Expiry Date (Optional) */}
           <div>
-            <label htmlFor="announcement-expiry" className="flex items-center gap-1 text-xs font-semibold text-slate-300">
-              <Calendar className="h-3 w-3 text-slate-400" />
+            <label htmlFor="announcement-expiry" className="flex items-center gap-1 text-xs font-semibold text-[#78817B] uppercase tracking-wider">
+              <Calendar className="h-3 w-3 text-[#78817B]" />
               <span>Expiry Date (Optional)</span>
             </label>
             <input
@@ -237,14 +237,14 @@ export default function CreateAnnouncementModal({
               onChange={(e) => setExpiryDate(e.target.value)}
               disabled={submitting}
               min={new Date().toISOString().split('T')[0]}
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1.5 w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 text-xs sm:text-sm text-[#252B27] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A]"
             />
           </div>
 
           {/* Message textarea */}
           <div>
-            <label htmlFor="announcement-message" className="block text-xs font-semibold text-slate-300">
-              Announcement Message <span className="text-rose-400">*</span>
+            <label htmlFor="announcement-message" className="block text-xs font-semibold text-[#78817B] uppercase tracking-wider">
+              Announcement Message <span className="text-[#DC2626]">*</span>
             </label>
             <textarea
               id="announcement-message"
@@ -254,24 +254,24 @@ export default function CreateAnnouncementModal({
               placeholder="Write detailed announcement content here..."
               required
               disabled={submitting}
-              className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1.5 w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 text-xs sm:text-sm text-[#252B27] placeholder-[#9CA3AF] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A]"
             />
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 border-t border-slate-800 pt-4">
+          <div className="flex items-center justify-end gap-3 border-t border-[#E8ECE7] pt-4">
             <button
               type="button"
               onClick={handleClose}
               disabled={submitting}
-              className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white disabled:opacity-50"
+              className="rounded-xl border border-[#E8ECE7] bg-white px-4 py-2 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3] disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-md hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#145C3A] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[#21845A] focus:outline-none focus:ring-2 focus:ring-[#145C3A] disabled:opacity-50 transition-colors"
             >
               {submitting ? (
                 <>

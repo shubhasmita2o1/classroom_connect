@@ -15,14 +15,14 @@ export default function NotificationDetailModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#252B27]/40 p-4 backdrop-blur-sm overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="notification-detail-title"
     >
-      <div className="w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl my-8">
+      <div className="w-full max-w-lg rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-xl my-8">
         {/* Header Badges & Close */}
-        <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-start justify-between border-b border-[#E8ECE7] pb-4">
           <div className="flex flex-wrap items-center gap-2">
             {/* Category Badge */}
             <span
@@ -34,7 +34,7 @@ export default function NotificationDetailModal({
 
             {/* Priority Badge */}
             {isUrgent && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-rose-800 bg-rose-950 px-2 py-0.5 text-[11px] font-bold uppercase text-rose-300">
+              <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[11px] font-bold uppercase text-rose-700">
                 <Flame className="h-3 w-3" />
                 Urgent Priority
               </span>
@@ -43,10 +43,10 @@ export default function NotificationDetailModal({
             {/* Read/Unread State for Student */}
             {isStudent && (
               <span
-                className={`rounded px-2 py-0.5 text-[11px] font-medium border ${
+                className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium border ${
                   notification.is_read
-                    ? 'border-slate-800 bg-slate-950 text-slate-400'
-                    : 'border-blue-800/80 bg-blue-950/80 text-blue-300'
+                    ? 'border-[#E8ECE7] bg-[#F5F6F3] text-[#78817B]'
+                    : 'border-[#21845A]/30 bg-[#EAF3ED] text-[#145C3A] font-semibold'
                 }`}
               >
                 {notification.is_read ? 'Read' : 'Unread'}
@@ -57,7 +57,7 @@ export default function NotificationDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="rounded-lg p-1 text-[#78817B] hover:bg-[#F5F6F3] hover:text-[#252B27]"
             aria-label="Close modal"
           >
             <X className="h-5 w-5" />
@@ -67,18 +67,18 @@ export default function NotificationDetailModal({
         {/* Content Body */}
         <div className="mt-4 space-y-4">
           <div>
-            <h2 id="notification-detail-title" className="text-lg font-bold text-white sm:text-xl">
+            <h2 id="notification-detail-title" className="text-lg font-bold text-[#252B27] sm:text-xl">
               {notification.title}
             </h2>
 
             {/* Sender & Timestamp Metadata */}
-            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400">
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#78817B]">
               <div className="flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5 text-slate-500" />
-                <span>{notification.sender_name || 'Academic Administration'}</span>
+                <User className="h-3.5 w-3.5 text-[#78817B]" />
+                <span className="font-medium text-[#252B27]">{notification.sender_name || 'Academic Administration'}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5 text-slate-500" />
+                <Clock className="h-3.5 w-3.5 text-[#78817B]" />
                 <span>
                   {notification.publication_date || 'Date'}
                   {notification.relative_time ? ` (${notification.relative_time})` : ''}
@@ -89,11 +89,11 @@ export default function NotificationDetailModal({
 
           {/* Subject tag if attached */}
           {notification.subjects && (
-            <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/80 px-3 py-2 text-xs">
-              <BookOpen className="h-4 w-4 text-blue-400 shrink-0" />
+            <div className="flex items-center gap-2 rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3 py-2 text-xs">
+              <BookOpen className="h-4 w-4 text-[#145C3A] shrink-0" />
               <div className="truncate">
-                <span className="font-semibold text-white">Course: </span>
-                <span className="font-mono text-slate-300">
+                <span className="font-semibold text-[#252B27]">Course: </span>
+                <span className="font-mono text-[#78817B]">
                   {notification.subjects.subject_code} — {notification.subjects.subject_name}
                 </span>
               </div>
@@ -102,30 +102,30 @@ export default function NotificationDetailModal({
 
           {/* Urgent Alert Banner */}
           {isUrgent && (
-            <div className="flex items-start gap-2.5 rounded-xl border border-rose-900/60 bg-rose-950/40 p-3 text-xs text-rose-200">
-              <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0 mt-0.5" />
-              <span>
+            <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800">
+              <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
+              <span className="font-medium">
                 This is a high-priority notice requiring immediate student attention.
               </span>
             </div>
           )}
 
           {/* Announcement Message */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 text-xs leading-relaxed text-slate-200 whitespace-pre-line max-h-72 overflow-y-auto">
+          <div className="rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/60 p-4 text-xs leading-relaxed text-[#252B27] whitespace-pre-line max-h-72 overflow-y-auto">
             {notification.description}
           </div>
 
           {/* Expiry info if available */}
           {notification.expiry_date && (
-            <p className="text-[11px] text-slate-500 italic">
+            <p className="text-[11px] text-[#78817B] italic">
               Notice valid until: {new Date(notification.expiry_date).toLocaleDateString()}
             </p>
           )}
         </div>
 
         {/* Footer Actions */}
-        <div className="mt-6 flex items-center justify-between border-t border-slate-800 pt-4">
-          <div className="text-xs text-slate-500">
+        <div className="mt-6 flex items-center justify-between border-t border-[#E8ECE7] pt-4">
+          <div className="text-xs text-[#78817B]">
             {notification.is_read && notification.read_at && (
               <span>Read on {new Date(notification.read_at).toLocaleDateString()}</span>
             )}
@@ -136,7 +136,7 @@ export default function NotificationDetailModal({
               <button
                 type="button"
                 onClick={() => onMarkAsRead(notification.id)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-700 bg-blue-950/80 px-3.5 py-2 text-xs font-semibold text-blue-300 hover:bg-blue-900/80 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#21845A]/30 bg-[#EAF3ED] px-3.5 py-2 text-xs font-semibold text-[#145C3A] hover:bg-[#145C3A] hover:text-white transition-colors"
               >
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 <span>Mark as Read</span>
@@ -146,7 +146,7 @@ export default function NotificationDetailModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white"
+              className="rounded-xl border border-[#E8ECE7] bg-white px-4 py-2 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3]"
             >
               Close
             </button>

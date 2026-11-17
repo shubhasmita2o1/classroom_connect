@@ -68,23 +68,23 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#252B27]/40 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-[#E8ECE7] pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#EAF3ED] text-[#145C3A]">
               <Lock className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Change Account Password</h3>
-              <p className="text-xs text-slate-400">Re-authenticate and set your new credentials</p>
+              <h3 className="text-base font-bold text-[#252B27]">Change Account Password</h3>
+              <p className="text-xs text-[#78817B]">Re-authenticate and set your new credentials</p>
             </div>
           </div>
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white"
+            className="rounded-lg p-1.5 text-[#78817B] hover:bg-[#F5F6F3] hover:text-[#252B27]"
             aria-label="Close modal"
           >
             <X className="h-5 w-5" />
@@ -101,8 +101,8 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
             />
           )}
           {successMessage && (
-            <div className="flex items-center gap-2 rounded-lg border border-emerald-800/80 bg-emerald-950/50 p-3 text-xs text-emerald-200">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+            <div className="flex items-center gap-2 rounded-xl border border-[#21845A]/30 bg-[#EAF3ED] p-3 text-xs font-medium text-[#145C3A]">
+              <CheckCircle2 className="h-4 w-4 text-[#145C3A] shrink-0" />
               <span>{successMessage}</span>
             </div>
           )}
@@ -112,7 +112,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           {/* Current Password Field */}
           <div>
-            <label className="block text-xs font-medium uppercase tracking-wider text-slate-300">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#78817B]">
               Current Password *
             </label>
             <div className="relative mt-1">
@@ -124,12 +124,12 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 disabled={submitting}
-                className="block w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 pr-10 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+                className="block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 pr-10 text-xs sm:text-sm text-[#252B27] placeholder-[#9CA3AF] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A] disabled:opacity-50"
               />
               <button
                 type="button"
                 onClick={() => setShowCurrentPass(!showCurrentPass)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-200"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#78817B] hover:text-[#252B27]"
                 aria-label={showCurrentPass ? 'Hide current password' : 'Show current password'}
               >
                 {showCurrentPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -139,7 +139,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
 
           {/* New Password Field */}
           <div>
-            <label className="block text-xs font-medium uppercase tracking-wider text-slate-300">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#78817B]">
               New Password *
             </label>
             <div className="relative mt-1">
@@ -151,12 +151,12 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 disabled={submitting}
-                className="block w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 pr-10 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+                className="block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 pr-10 text-xs sm:text-sm text-[#252B27] placeholder-[#9CA3AF] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A] disabled:opacity-50"
               />
               <button
                 type="button"
                 onClick={() => setShowNewPass(!showNewPass)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-200"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#78817B] hover:text-[#252B27]"
                 aria-label={showNewPass ? 'Hide new password' : 'Show new password'}
               >
                 {showNewPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -166,7 +166,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
 
           {/* Confirm New Password Field */}
           <div>
-            <label className="block text-xs font-medium uppercase tracking-wider text-slate-300">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-[#78817B]">
               Confirm New Password *
             </label>
             <input
@@ -177,28 +177,30 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={submitting}
-              className="mt-1 block w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+              className="mt-1 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3]/50 px-3.5 py-2 text-xs sm:text-sm text-[#252B27] placeholder-[#9CA3AF] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A] disabled:opacity-50"
             />
           </div>
 
-          <div className="rounded-lg bg-slate-950/60 border border-slate-800 p-2.5 text-[11px] text-slate-400 flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-blue-400 shrink-0" />
-            <span>Re-authentication required. Password changes take effect immediately.</span>
+          <div className="rounded-xl bg-[#EAF3ED]/60 border border-[#21845A]/20 p-3 text-xs text-[#145C3A] flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-[#145C3A] shrink-0" />
+            <span className="text-[11px] font-medium leading-relaxed">
+              Re-authentication required. Password changes take effect immediately across all sessions.
+            </span>
           </div>
 
-          <div className="mt-6 flex justify-end gap-3 pt-2 border-t border-slate-800">
+          <div className="mt-6 flex justify-end gap-3 pt-3 border-t border-[#E8ECE7]">
             <button
               type="button"
               onClick={handleClose}
               disabled={submitting}
-              className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white"
+              className="rounded-xl border border-[#E8ECE7] bg-white px-4 py-2 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-500 disabled:opacity-50 shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#145C3A] px-4 py-2 text-xs font-semibold text-white hover:bg-[#21845A] disabled:opacity-50 shadow-sm"
             >
               {submitting ? 'Verifying & Updating...' : 'Save New Password'}
             </button>

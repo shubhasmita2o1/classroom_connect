@@ -27,32 +27,32 @@ export const CATEGORY_SHORT_NAMES = {
 
 export const CATEGORY_STYLES = {
   'Urgent Notice': {
-    badge: 'bg-rose-950/80 text-rose-300 border-rose-800/80',
+    badge: 'bg-rose-50 text-rose-700 border-rose-200',
     dot: 'bg-rose-500',
     label: 'Urgent',
   },
   'Academic Notice': {
-    badge: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/80',
-    dot: 'bg-emerald-500',
+    badge: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+    dot: 'bg-emerald-600',
     label: 'Academic',
   },
   'Examination Notice': {
-    badge: 'bg-purple-950/80 text-purple-300 border-purple-800/80',
+    badge: 'bg-purple-50 text-purple-700 border-purple-200',
     dot: 'bg-purple-500',
     label: 'Exam',
   },
   'Holiday Notice': {
-    badge: 'bg-amber-950/80 text-amber-300 border-amber-800/80',
+    badge: 'bg-amber-50 text-amber-800 border-amber-200',
     dot: 'bg-amber-500',
     label: 'Holiday',
   },
   'Important Announcement': {
-    badge: 'bg-orange-950/80 text-orange-300 border-orange-800/80',
+    badge: 'bg-orange-50 text-orange-800 border-orange-200',
     dot: 'bg-orange-500',
     label: 'Important',
   },
   'General Announcement': {
-    badge: 'bg-sky-950/80 text-sky-300 border-sky-800/80',
+    badge: 'bg-sky-50 text-sky-800 border-sky-200',
     dot: 'bg-sky-500',
     label: 'General',
   },

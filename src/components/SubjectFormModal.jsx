@@ -128,23 +128,23 @@ export default function SubjectFormModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#252B27]/40 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-labelledby="subject-form-modal-title"
     >
-      <div className="w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
+      <div className="w-full max-w-lg rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-[#E8ECE7] pb-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/30 bg-blue-600/20 text-blue-400">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#21845A]/20 bg-[#EAF3ED] text-[#145C3A]">
               <BookOpen className="h-5 w-5" />
             </div>
             <div>
-              <h3 id="subject-form-modal-title" className="text-base font-bold text-white">
+              <h3 id="subject-form-modal-title" className="text-base font-bold text-[#252B27]">
                 {isEdit ? 'Edit Subject Details' : 'Add New Curriculum Subject'}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-[#78817B]">
                 {isEdit
                   ? 'Update subject metadata without affecting historical attendance records.'
                   : 'Create an active or inactive subject for the classroom curriculum.'}
@@ -156,7 +156,7 @@ export default function SubjectFormModal({
             type="button"
             onClick={onClose}
             disabled={submitting}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white disabled:opacity-50"
+            className="rounded-lg p-1.5 text-[#78817B] hover:bg-[#F5F6F3] hover:text-[#252B27] disabled:opacity-50"
             aria-label="Close subject modal"
           >
             <X className="h-5 w-5" />
@@ -175,7 +175,7 @@ export default function SubjectFormModal({
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div>
-            <label htmlFor="subject-code-input" className="block text-xs font-medium text-slate-300">
+            <label htmlFor="subject-code-input" className="block text-xs font-semibold text-[#252B27]">
               Subject Code *
             </label>
             <input
@@ -186,15 +186,15 @@ export default function SubjectFormModal({
               placeholder="e.g. CS101, MATH-201"
               value={subjectCode}
               onChange={(e) => setSubjectCode(e.target.value.toUpperCase())}
-              className="mt-1.5 block w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 font-mono text-sm uppercase tracking-wider text-slate-100 placeholder-slate-500 placeholder:normal-case placeholder:tracking-normal focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+              className="mt-1.5 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2 font-mono text-sm uppercase tracking-wider text-[#252B27] placeholder-[#78817B] placeholder:normal-case placeholder:tracking-normal focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A] disabled:opacity-50"
             />
-            <p className="mt-1 text-[11px] text-slate-500">
+            <p className="mt-1 text-[11px] text-[#78817B]">
               Unique uppercase identifier (2-20 characters, letters, numbers, ., _, -).
             </p>
           </div>
 
           <div>
-            <label htmlFor="subject-name-input" className="block text-xs font-medium text-slate-300">
+            <label htmlFor="subject-name-input" className="block text-xs font-semibold text-[#252B27]">
               Subject Name *
             </label>
             <input
@@ -205,12 +205,12 @@ export default function SubjectFormModal({
               placeholder="e.g. Data Structures and Algorithms"
               value={subjectName}
               onChange={(e) => setSubjectName(e.target.value)}
-              className="mt-1.5 block w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+              className="mt-1.5 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2 text-sm text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A] disabled:opacity-50"
             />
           </div>
 
           <div>
-            <label htmlFor="subject-description-input" className="block text-xs font-medium text-slate-300">
+            <label htmlFor="subject-description-input" className="block text-xs font-semibold text-[#252B27]">
               Description
             </label>
             <textarea
@@ -220,14 +220,14 @@ export default function SubjectFormModal({
               placeholder="Optional course scope, credits, or classroom notes..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1.5 block w-full rounded-lg border border-slate-700 bg-slate-950 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+              className="mt-1.5 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2 text-sm text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A] disabled:opacity-50"
             />
           </div>
 
-          <div className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-950/70 px-3.5 py-2.5">
+          <div className="flex items-center justify-between rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2.5">
             <div>
-              <p className="text-xs font-semibold text-slate-200">Subject Active Status</p>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-xs font-semibold text-[#252B27]">Subject Active Status</p>
+              <p className="text-[11px] text-[#78817B]">
                 Active subjects are visible in curriculum and available for faculty allocation.
               </p>
             </div>
@@ -237,27 +237,27 @@ export default function SubjectFormModal({
                 checked={isActive}
                 disabled={submitting}
                 onChange={(e) => setIsActive(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-[#E8ECE7] text-[#145C3A] focus:ring-[#145C3A]"
               />
-              <span className={`text-xs font-semibold ${isActive ? 'text-emerald-400' : 'text-slate-400'}`}>
+              <span className={`text-xs font-semibold ${isActive ? 'text-[#145C3A]' : 'text-[#78817B]'}`}>
                 {isActive ? 'Active' : 'Inactive'}
               </span>
             </label>
           </div>
 
-          <div className="flex items-center justify-end gap-3 border-t border-slate-800 pt-4">
+          <div className="flex items-center justify-end gap-3 border-t border-[#E8ECE7] pt-4">
             <button
               type="button"
               onClick={onClose}
               disabled={submitting}
-              className="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-medium text-slate-300 hover:bg-slate-700 hover:text-white disabled:opacity-50"
+              className="rounded-full border border-[#E8ECE7] bg-white px-4 py-2 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3] disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#145C3A] px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[#21845A] disabled:opacity-50 transition-colors"
             >
               {submitting ? (
                 <>

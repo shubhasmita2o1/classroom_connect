@@ -7,16 +7,16 @@ export default function NotFoundPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-950 p-6 text-slate-100">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/80 p-8 shadow-2xl text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-950/60 text-blue-400 border border-blue-800/60 shadow-inner">
-          <GraduationCap className="h-8 w-8" />
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#F5F6F3] p-6 text-[#252B27]">
+      <div className="w-full max-w-md rounded-2xl border border-[#E8ECE7] bg-white p-8 shadow-sm text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EAF3ED] text-[#145C3A] border border-[#21845A]/20 shadow-inner">
+          <GraduationCap className="h-7 w-7" />
         </div>
 
-        <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-white">
+        <h1 className="mt-5 text-xl font-bold tracking-tight text-[#252B27]">
           404 — Page Not Found
         </h1>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-xs text-[#78817B]">
           The requested institutional route does not exist or has been relocated.
         </p>
 
@@ -25,7 +25,7 @@ export default function NotFoundPage() {
             <button
               type="button"
               onClick={() => navigate(`/${role}`, { replace: true })}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#145C3A] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[#21845A] transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Return to {role.charAt(0).toUpperCase() + role.slice(1)} Dashboard</span>
@@ -34,7 +34,7 @@ export default function NotFoundPage() {
             <button
               type="button"
               onClick={() => navigate('/login', { replace: true })}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#145C3A] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[#21845A] transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Return to Login</span>

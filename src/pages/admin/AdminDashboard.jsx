@@ -446,86 +446,96 @@ export default function AdminDashboard() {
   })
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <Navbar />
+    <div className="min-h-screen bg-[#F5F6F3] text-[#252B27]">
+      <Navbar activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Page Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-800 pb-6">
+      <main className="md:pl-64 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
+        {/* Page Header (Donezo Template Format) */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="rounded bg-indigo-950 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-400 border border-indigo-800/80">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#252B27]">
+                Dashboard
+              </h1>
+              <span className="rounded-full bg-[#EAF3ED] border border-[#21845A]/20 px-2.5 py-0.5 text-xs font-semibold text-[#145C3A]">
                 Institutional Administration
               </span>
-              <span className="text-xs text-slate-500">• Single Classroom Model</span>
             </div>
-            <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white">
-              Administrator Portal
-            </h1>
-            <p className="mt-1 text-sm text-slate-400">
-              Manage accounts, verify roster allocations, enforce security policies, and review audit records.
+            <p className="mt-1 text-xs sm:text-sm text-[#78817B]">
+              Manage user accounts, curriculum allocations, campus circulars, and system audit records.
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              loadStats()
-              if (activeTab === 'directory') loadProfiles()
-              if (activeTab === 'audit') loadAuditLogs()
-              if (activeTab === 'announcements') loadAdminAnnouncements()
-            }}
-            className="inline-flex items-center gap-1.5 self-start rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
-          >
-            <RefreshCw className="h-3.5 w-3.5 text-slate-400" />
-            <span>Refresh Data</span>
-          </button>
+          <div className="flex items-center gap-2.5 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setAnnouncementModalOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-[#145C3A] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-[#21845A] shadow-sm transition-colors"
+            >
+              <Megaphone className="h-4 w-4" />
+              <span>Publish Announcement</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                loadStats()
+                if (activeTab === 'directory') loadProfiles()
+                if (activeTab === 'audit') loadAuditLogs()
+                if (activeTab === 'announcements') loadAdminAnnouncements()
+              }}
+              className="inline-flex items-center gap-2 rounded-full border border-[#E8ECE7] bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#252B27] hover:bg-[#F5F6F3] shadow-sm transition-colors"
+            >
+              <RefreshCw className="h-3.5 w-3.5 text-[#78817B]" />
+              <span>Refresh Data</span>
+            </button>
+          </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="mt-6 border-b border-slate-800">
-          <nav className="flex space-x-6 overflow-x-auto whitespace-nowrap text-sm font-medium">
+        {/* Navigation Tabs Pill Bar */}
+        <div className="overflow-x-auto pb-1">
+          <nav className="flex space-x-2 whitespace-nowrap">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`pb-3 border-b-2 transition-colors ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all shadow-sm ${
                 activeTab === 'overview'
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#145C3A] text-white'
+                  : 'bg-white border border-[#E8ECE7] text-[#78817B] hover:text-[#252B27] hover:bg-[#F5F6F3]'
               }`}
             >
               System Overview
             </button>
             <button
               onClick={() => setActiveTab('provisioning')}
-              className={`pb-3 border-b-2 transition-colors flex items-center gap-1.5 ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm ${
                 activeTab === 'provisioning'
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#145C3A] text-white'
+                  : 'bg-white border border-[#E8ECE7] text-[#78817B] hover:text-[#252B27] hover:bg-[#F5F6F3]'
               }`}
             >
-              <UserPlus className="h-4 w-4" />
+              <UserPlus className="h-3.5 w-3.5" />
               <span>Account Provisioning</span>
             </button>
             <button
               onClick={() => setActiveTab('directory')}
-              className={`pb-3 border-b-2 transition-colors flex items-center gap-1.5 ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm ${
                 activeTab === 'directory'
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#145C3A] text-white'
+                  : 'bg-white border border-[#E8ECE7] text-[#78817B] hover:text-[#252B27] hover:bg-[#F5F6F3]'
               }`}
             >
-              <Users className="h-4 w-4" />
+              <Users className="h-3.5 w-3.5" />
               <span>Roster & Users</span>
             </button>
             <button
               onClick={() => setActiveTab('academics')}
-              className={`pb-3 border-b-2 transition-colors flex items-center gap-1.5 ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm ${
                 activeTab === 'academics'
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#145C3A] text-white'
+                  : 'bg-white border border-[#E8ECE7] text-[#78817B] hover:text-[#252B27] hover:bg-[#F5F6F3]'
               }`}
             >
-              <BookOpen className="h-4 w-4" />
+              <BookOpen className="h-3.5 w-3.5" />
               <span>Academic Management</span>
             </button>
             <button
@@ -533,24 +543,24 @@ export default function AdminDashboard() {
                 setActiveTab('announcements')
                 loadAdminAnnouncements(true)
               }}
-              className={`pb-3 border-b-2 transition-colors flex items-center gap-1.5 ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm ${
                 activeTab === 'announcements'
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#145C3A] text-white'
+                  : 'bg-white border border-[#E8ECE7] text-[#78817B] hover:text-[#252B27] hover:bg-[#F5F6F3]'
               }`}
             >
-              <Megaphone className="h-4 w-4" />
+              <Megaphone className="h-3.5 w-3.5" />
               <span>Announcements</span>
             </button>
             <button
               onClick={() => setActiveTab('audit')}
-              className={`pb-3 border-b-2 transition-colors flex items-center gap-1.5 ${
+              className={`rounded-full px-4 py-2 text-xs font-semibold transition-all flex items-center gap-1.5 shadow-sm ${
                 activeTab === 'audit'
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#145C3A] text-white'
+                  : 'bg-white border border-[#E8ECE7] text-[#78817B] hover:text-[#252B27] hover:bg-[#F5F6F3]'
               }`}
             >
-              <Activity className="h-4 w-4" />
+              <Activity className="h-3.5 w-3.5" />
               <span>Audit Logs</span>
             </button>
           </nav>
@@ -558,117 +568,142 @@ export default function AdminDashboard() {
 
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
-          <div className="mt-8 space-y-8">
-            {/* Key Metrics */}
+          <div className="space-y-8">
+            {/* 4-Card Hero Grid (Donezo Pattern) */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 shadow-sm">
+              {/* Card 1: Hero Deep Forest Green Card */}
+              <div className="rounded-2xl bg-[#145C3A] text-white p-5 sm:p-6 shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[140px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <span className="text-xs font-medium text-white/90">
                     Active Students
                   </span>
-                  <div className="rounded-lg bg-sky-950/60 p-2 text-sky-400 border border-sky-800/40">
-                    <BookOpen className="h-5 w-5" />
+                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-white">
+                    <BookOpen className="h-4 w-4" />
                   </div>
                 </div>
-                <div className="mt-3">
-                  <div className="text-3xl font-bold text-white">
+                <div className="my-2">
+                  <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                     {loadingStats ? '...' : stats.activeStudents}
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">Classroom Roster: 25 Target</p>
                 </div>
+                <div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#21845A] px-2.5 py-0.5 text-[11px] font-semibold text-white/95">
+                    <span>Classroom Roster: 25 Target</span>
+                  </span>
+                </div>
+                <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/5 pointer-events-none" />
               </div>
 
-              <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 shadow-sm">
+              {/* Card 2: White Card - Active Faculty */}
+              <div className="rounded-2xl border border-[#E8ECE7] bg-white p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[140px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <span className="text-xs font-semibold text-[#78817B]">
                     Active Faculty
                   </span>
-                  <div className="rounded-lg bg-emerald-950/60 p-2 text-emerald-400 border border-emerald-800/40">
-                    <Award className="h-5 w-5" />
+                  <div className="h-8 w-8 rounded-full border border-[#E8ECE7] flex items-center justify-center text-[#78817B]">
+                    <Award className="h-4 w-4" />
                   </div>
                 </div>
-                <div className="mt-3">
-                  <div className="text-3xl font-bold text-white">
+                <div className="my-2">
+                  <div className="text-3xl sm:text-4xl font-bold text-[#252B27] tracking-tight">
                     {loadingStats ? '...' : stats.activeFaculty}
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">Assigned Department Instructors</p>
+                </div>
+                <div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#EAF3ED] px-2.5 py-0.5 text-[11px] font-semibold text-[#145C3A]">
+                    <span>Assigned Department Instructors</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 shadow-sm">
+              {/* Card 3: White Card - Active Subjects */}
+              <div className="rounded-2xl border border-[#E8ECE7] bg-white p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[140px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <span className="text-xs font-semibold text-[#78817B]">
                     Active Subjects
                   </span>
-                  <div className="rounded-lg bg-indigo-950/60 p-2 text-indigo-400 border border-indigo-800/40">
-                    <Calendar className="h-5 w-5" />
+                  <div className="h-8 w-8 rounded-full border border-[#E8ECE7] flex items-center justify-center text-[#78817B]">
+                    <Calendar className="h-4 w-4" />
                   </div>
                 </div>
-                <div className="mt-3">
-                  <div className="text-3xl font-bold text-white">
+                <div className="my-2">
+                  <div className="text-3xl sm:text-4xl font-bold text-[#252B27] tracking-tight">
                     {loadingStats ? '...' : stats.activeSubjects}
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">Curriculum courses active</p>
+                </div>
+                <div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#F5F6F3] border border-[#E8ECE7] px-2.5 py-0.5 text-[11px] font-semibold text-[#78817B]">
+                    <span>Curriculum courses active</span>
+                  </span>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 shadow-sm">
+              {/* Card 4: White Card - Attendance Sessions */}
+              <div className="rounded-2xl border border-[#E8ECE7] bg-white p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[140px]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <span className="text-xs font-semibold text-[#78817B]">
                     Attendance Sessions
                   </span>
-                  <div className="rounded-lg bg-amber-950/60 p-2 text-amber-400 border border-amber-800/40">
-                    <Activity className="h-5 w-5" />
+                  <div className="h-8 w-8 rounded-full border border-[#E8ECE7] flex items-center justify-center text-[#78817B]">
+                    <Activity className="h-4 w-4" />
                   </div>
                 </div>
-                <div className="mt-3">
-                  <div className="text-3xl font-bold text-white">
+                <div className="my-2">
+                  <div className="text-3xl sm:text-4xl font-bold text-[#252B27] tracking-tight">
                     {loadingStats ? '...' : stats.totalSessions}
                   </div>
-                  <p className="mt-1 text-xs text-slate-500">Recorded lecture sessions</p>
+                </div>
+                <div>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#EAF3ED] px-2.5 py-0.5 text-[11px] font-semibold text-[#145C3A]">
+                    <span>Recorded lecture sessions</span>
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Institutional Security Policy Status Card */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-6">
+            <div className="rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-sm">
               <div className="flex items-center gap-3">
-                <Shield className="h-6 w-6 text-blue-400" />
-                <h2 className="text-lg font-bold text-white">Institutional Security Status</h2>
+                <div className="h-10 w-10 rounded-2xl bg-[#EAF3ED] text-[#145C3A] flex items-center justify-center">
+                  <Shield className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold text-[#252B27]">Institutional Security Status</h2>
+                  <p className="text-xs text-[#78817B]">
+                    Security hardening parameters enforced at the database and application layer:
+                  </p>
+                </div>
               </div>
-              <p className="mt-1 text-xs text-slate-400">
-                Security hardening parameters enforced at the database and application layer:
-              </p>
 
               <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="rounded-lg border border-slate-800 bg-slate-900/80 p-4">
-                  <p className="text-xs font-medium text-slate-400">Authentication Model</p>
-                  <p className="mt-1 font-mono text-base font-bold text-blue-400">
+                <div className="rounded-2xl border border-[#E8ECE7] bg-[#F5F6F3]/50 p-4">
+                  <p className="text-xs font-semibold text-[#78817B]">Authentication Model</p>
+                  <p className="mt-1 font-mono text-sm font-bold text-[#145C3A]">
                     College Login ID
                   </p>
-                  <p className="mt-1 text-[11px] text-slate-500">
+                  <p className="mt-1 text-[11px] text-[#78817B]">
                     Internal mapping; zero external email dependency
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-slate-800 bg-slate-900/80 p-4">
-                  <p className="text-xs font-medium text-slate-400">Public Self-Registration</p>
-                  <div className="mt-1 flex items-center gap-1.5 text-base font-bold text-emerald-400">
-                    <XCircle className="h-4 w-4" />
+                <div className="rounded-2xl border border-[#E8ECE7] bg-[#F5F6F3]/50 p-4">
+                  <p className="text-xs font-semibold text-[#78817B]">Public Self-Registration</p>
+                  <div className="mt-1 flex items-center gap-1.5 text-sm font-bold text-[#145C3A]">
+                    <CheckCircle2 className="h-4 w-4" />
                     <span>Strictly Disabled</span>
                   </div>
-                  <p className="mt-1 text-[11px] text-slate-500">
+                  <p className="mt-1 text-[11px] text-[#78817B]">
                     Admin-controlled account provisioning only
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-slate-800 bg-slate-900/80 p-4">
-                  <p className="text-xs font-medium text-slate-400">Row Level Security (RLS)</p>
-                  <div className="mt-1 flex items-center gap-1.5 text-base font-bold text-emerald-400">
+                <div className="rounded-2xl border border-[#E8ECE7] bg-[#F5F6F3]/50 p-4">
+                  <p className="text-xs font-semibold text-[#78817B]">Row Level Security (RLS)</p>
+                  <div className="mt-1 flex items-center gap-1.5 text-sm font-bold text-[#145C3A]">
                     <CheckCircle2 className="h-4 w-4" />
                     <span>Active on all 12 Tables</span>
                   </div>
-                  <p className="mt-1 text-[11px] text-slate-500">
+                  <p className="mt-1 text-[11px] text-[#78817B]">
                     Zero anonymous access, role authorization
                   </p>
                 </div>
@@ -679,17 +714,17 @@ export default function AdminDashboard() {
 
         {/* TAB 2: ACCOUNT PROVISIONING */}
         {activeTab === 'provisioning' && (
-          <div className="mt-8 max-w-2xl">
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+          <div className="max-w-2xl">
+            <div className="rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EAF3ED] text-[#145C3A] border border-[#21845A]/20">
                   <UserPlus className="h-5 w-5" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white">
+                  <h2 className="text-lg font-bold text-[#252B27]">
                     Provision College Account
                   </h2>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-[#78817B]">
                     Create verified student, faculty, or admin accounts with automatic roster synchronization.
                   </p>
                 </div>
@@ -718,7 +753,7 @@ export default function AdminDashboard() {
               <form onSubmit={handleProvisionSubmit} className="mt-6 space-y-4">
                 {/* Login ID */}
                 <div>
-                  <label className="block text-xs font-medium text-slate-300">
+                  <label className="block text-xs font-semibold text-[#252B27]">
                     College Login ID *
                   </label>
                   <div className="relative mt-1">
@@ -728,17 +763,17 @@ export default function AdminDashboard() {
                       placeholder="e.g. ADMIN002, FAC002, STU002"
                       value={provForm.loginId}
                       onChange={(e) => setProvForm({ ...provForm, loginId: e.target.value.toUpperCase() })}
-                      className="block w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 font-mono text-sm uppercase tracking-wider text-slate-100 placeholder-slate-500 placeholder:normal-case placeholder:tracking-normal focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2 font-mono text-sm uppercase tracking-wider text-[#252B27] placeholder-[#78817B] placeholder:normal-case placeholder:tracking-normal focus:border-[#145C3A] focus:bg-white focus:outline-none transition-colors"
                     />
                   </div>
-                  <p className="mt-1 text-[11px] text-slate-500">
+                  <p className="mt-1 text-[11px] text-[#78817B]">
                     Admin format: ADMIN001... • Faculty format: FAC001... • Student format: STU001...
                   </p>
                 </div>
 
                 {/* Full Name */}
                 <div>
-                  <label className="block text-xs font-medium text-slate-300">
+                  <label className="block text-xs font-semibold text-[#252B27]">
                     Full Name *
                   </label>
                   <input
@@ -747,13 +782,13 @@ export default function AdminDashboard() {
                     placeholder="e.g. Dr. Robert Davis or Sarah Miller"
                     value={provForm.fullName}
                     onChange={(e) => setProvForm({ ...provForm, fullName: e.target.value })}
-                    className="mt-1 block w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2 text-sm text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:bg-white focus:outline-none transition-colors"
                   />
                 </div>
 
                 {/* Password */}
                 <div>
-                  <label className="block text-xs font-medium text-slate-300">
+                  <label className="block text-xs font-semibold text-[#252B27]">
                     Temporary Password *
                   </label>
                   <input
@@ -762,19 +797,19 @@ export default function AdminDashboard() {
                     placeholder="Minimum 8 characters"
                     value={provForm.password}
                     onChange={(e) => setProvForm({ ...provForm, password: e.target.value })}
-                    className="mt-1 block w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2 text-sm text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:bg-white focus:outline-none transition-colors"
                   />
                 </div>
 
                 {/* Role Selection */}
                 <div>
-                  <label className="block text-xs font-medium text-slate-300">
+                  <label className="block text-xs font-semibold text-[#252B27]">
                     Account Role *
                   </label>
                   <select
                     value={provForm.role}
                     onChange={(e) => setProvForm({ ...provForm, role: e.target.value })}
-                    className="mt-1 block w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3 py-2 text-xs font-semibold text-[#252B27] focus:border-[#145C3A] focus:outline-none transition-colors"
                   >
                     <option value="student">Student (Classroom Roster)</option>
                     <option value="faculty">Faculty (Academic Instructor)</option>
@@ -785,7 +820,7 @@ export default function AdminDashboard() {
                 {/* Conditional Roll Number / Employee ID */}
                 {provForm.role === 'student' && (
                   <div>
-                    <label className="block text-xs font-medium text-slate-300">
+                    <label className="block text-xs font-semibold text-[#252B27]">
                       Roll Number *
                     </label>
                     <input
@@ -794,14 +829,14 @@ export default function AdminDashboard() {
                       placeholder="e.g. STU002 or CS-2026-02"
                       value={provForm.rollNumber}
                       onChange={(e) => setProvForm({ ...provForm, rollNumber: e.target.value })}
-                      className="mt-1 block w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2 text-sm text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:bg-white focus:outline-none transition-colors"
                     />
                   </div>
                 )}
 
                 {provForm.role === 'faculty' && (
                   <div>
-                    <label className="block text-xs font-medium text-slate-300">
+                    <label className="block text-xs font-semibold text-[#252B27]">
                       Faculty Employee ID *
                     </label>
                     <input
@@ -810,7 +845,7 @@ export default function AdminDashboard() {
                       placeholder="e.g. FAC002"
                       value={provForm.employeeId}
                       onChange={(e) => setProvForm({ ...provForm, employeeId: e.target.value })}
-                      className="mt-1 block w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="mt-1 block w-full rounded-xl border border-[#E8ECE7] bg-[#F5F6F3] px-3.5 py-2 text-sm text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:bg-white focus:outline-none transition-colors"
                     />
                   </div>
                 )}
@@ -820,7 +855,7 @@ export default function AdminDashboard() {
                   <button
                     type="submit"
                     disabled={provSubmitting}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-50 transition-colors shadow-sm"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#145C3A] px-5 py-2.5 text-xs font-semibold text-white hover:bg-[#21845A] disabled:opacity-50 transition-colors shadow-sm"
                   >
                     {provSubmitting ? (
                       <>
@@ -837,10 +872,10 @@ export default function AdminDashboard() {
                 </div>
               </form>
 
-              <div className="mt-6 rounded-lg border border-slate-800 bg-slate-950 p-4 text-xs text-slate-400">
-                <p className="font-semibold text-slate-300 flex items-center gap-1.5">
-                  <Lock className="h-3.5 w-3.5 text-blue-400" />
-                  <span>Security & Service Role Isolation:</span>
+              <div className="mt-6 rounded-2xl border border-[#E8ECE7] bg-[#F5F6F3] p-4 text-xs text-[#78817B]">
+                <p className="font-semibold text-[#252B27] flex items-center gap-1.5">
+                  <Lock className="h-3.5 w-3.5 text-[#145C3A]" />
+                  <span>Security &amp; Service Role Isolation:</span>
                 </p>
                 <p className="mt-1 leading-relaxed">
                   Account provisioning invokes a server-side Supabase Edge Function using trusted
@@ -853,7 +888,7 @@ export default function AdminDashboard() {
 
         {/* TAB 3: ROSTER & DIRECTORY */}
         {activeTab === 'directory' && (
-          <div className="mt-8 space-y-6">
+          <div className="space-y-6">
             {directoryMessage && (
               <AlertBanner
                 type="success"
@@ -873,22 +908,22 @@ export default function AdminDashboard() {
             {/* Search and Filters */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="relative flex-1 max-w-sm">
-                <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                <Search className="pointer-events-none absolute left-3.5 top-2.5 h-4 w-4 text-[#78817B]" />
                 <input
                   type="text"
                   placeholder="Search by name or email..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2 pl-9 pr-3 text-sm text-slate-100 placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-full border border-[#E8ECE7] bg-white py-2 pl-10 pr-4 text-xs text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:outline-none shadow-sm transition-colors"
                 />
               </div>
 
               <div className="flex items-center gap-2">
-                <label className="text-xs text-slate-400">Role Filter:</label>
+                <label className="text-xs font-semibold text-[#78817B]">Role Filter:</label>
                 <select
                   value={roleFilter}
                   onChange={(e) => setRoleFilter(e.target.value)}
-                  className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs text-slate-200 focus:border-blue-500 focus:outline-none"
+                  className="rounded-full border border-[#E8ECE7] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#252B27] focus:border-[#145C3A] focus:outline-none shadow-sm"
                 >
                   <option value="all">All Roles</option>
                   <option value="admin">Admin</option>
@@ -899,10 +934,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Profiles Table */}
-            <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 shadow">
+            <div className="overflow-hidden rounded-2xl border border-[#E8ECE7] bg-white shadow-sm">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-800 text-left text-sm text-slate-300">
-                  <thead className="bg-slate-900/90 text-xs uppercase tracking-wider text-slate-400">
+                <table className="min-w-full divide-y divide-[#E8ECE7] text-left text-sm text-[#252B27]">
+                  <thead className="bg-[#F5F6F3] text-xs font-semibold uppercase tracking-wider text-[#78817B]">
                     <tr>
                       <th className="px-6 py-3.5">Login ID</th>
                       <th className="px-6 py-3.5">User Profile</th>
@@ -911,37 +946,37 @@ export default function AdminDashboard() {
                       <th className="px-6 py-3.5 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 font-normal">
+                  <tbody className="divide-y divide-[#E8ECE7] font-normal">
                     {loadingProfiles ? (
                       <tr>
-                        <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                        <td colSpan={5} className="px-6 py-8 text-center text-[#78817B]">
                           Loading user directory...
                         </td>
                       </tr>
                     ) : filteredProfiles.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                        <td colSpan={5} className="px-6 py-8 text-center text-[#78817B]">
                           No matching profiles found in database.
                         </td>
                       </tr>
                     ) : (
                       filteredProfiles.map((p) => (
-                        <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
-                          <td className="px-6 py-4 font-mono text-sm font-bold text-blue-400 whitespace-nowrap">
+                        <tr key={p.id} className="hover:bg-[#F5F6F3]/50 transition-colors">
+                          <td className="px-6 py-4 font-mono text-sm font-bold text-[#145C3A] whitespace-nowrap">
                             {p.login_id || p.email?.split('@')[0]?.toUpperCase() || '-'}
                           </td>
-                          <td className="px-6 py-4 font-medium text-white whitespace-nowrap">
-                            <div>{p.full_name || 'Academic User'}</div>
-                            <div className="text-[11px] font-mono text-slate-500">{p.email}</div>
+                          <td className="px-6 py-4 font-medium whitespace-nowrap">
+                            <div className="font-semibold text-[#252B27]">{p.full_name || 'Academic User'}</div>
+                            <div className="text-[11px] font-mono text-[#78817B]">{p.email}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span
                               className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
                                 p.role === 'admin'
-                                  ? 'bg-indigo-950 text-indigo-300 border border-indigo-800'
+                                  ? 'bg-[#EAF3ED] text-[#145C3A] border border-[#21845A]/30'
                                   : p.role === 'faculty'
-                                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                                  : 'bg-sky-950 text-sky-300 border border-sky-800'
+                                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                  : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
                               }`}
                             >
                               {p.role}
@@ -949,12 +984,12 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {p.is_active ? (
-                              <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-400">
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#145C3A]">
                                 <CheckCircle2 className="h-3.5 w-3.5" />
                                 <span>Active</span>
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-400">
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#DC2626]">
                                 <XCircle className="h-3.5 w-3.5" />
                                 <span>Deactivated</span>
                               </span>
@@ -966,10 +1001,10 @@ export default function AdminDashboard() {
                                 type="button"
                                 onClick={() => handleToggleActive(p)}
                                 disabled={p.id === profile?.id}
-                                className={`rounded-md border px-3 py-1 text-xs font-medium transition-colors ${
+                                className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors shadow-sm ${
                                   p.is_active
-                                    ? 'border-amber-800/80 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60'
-                                    : 'border-emerald-900 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60'
+                                    ? 'border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100'
+                                    : 'border-[#21845A]/30 bg-[#EAF3ED] text-[#145C3A] hover:bg-[#145C3A] hover:text-white'
                                 } disabled:opacity-40 disabled:cursor-not-allowed`}
                               >
                                 {p.is_active ? 'Deactivate' : 'Reactivate'}
@@ -986,7 +1021,7 @@ export default function AdminDashboard() {
                                     ? 'Deactivate this account before permanently deleting'
                                     : 'Permanently delete this deactivated account'
                                 }
-                                className="inline-flex items-center gap-1 rounded-md border border-red-800/90 bg-red-950/60 px-3 py-1 text-xs font-semibold text-red-300 transition-colors hover:border-red-600 hover:bg-red-900/80 hover:text-white disabled:cursor-not-allowed disabled:border-red-950 disabled:bg-red-950/20 disabled:text-red-400/40"
+                                className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-[#DC2626] transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 disabled:border-[#E8ECE7] shadow-sm"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                                 <span>Permanently Delete</span>
@@ -1005,28 +1040,28 @@ export default function AdminDashboard() {
 
         {/* TAB 4: AUDIT LOGS */}
         {activeTab === 'audit' && (
-          <div className="mt-8 space-y-6">
+          <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-bold text-white">Attendance Audit Trail</h2>
-                <p className="text-xs text-slate-400">
+                <h2 className="text-lg font-bold text-[#252B27]">Attendance Audit Trail</h2>
+                <p className="text-xs text-[#78817B]">
                   Immutable record of session starts, attendance marks, finalizations, and admin corrections.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={loadAuditLogs}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs text-slate-300 hover:text-white"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#E8ECE7] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3] shadow-sm"
               >
-                <RefreshCw className="h-3.5 w-3.5" />
+                <RefreshCw className="h-3.5 w-3.5 text-[#78817B]" />
                 <span>Refresh Logs</span>
               </button>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 shadow">
+            <div className="overflow-hidden rounded-2xl border border-[#E8ECE7] bg-white shadow-sm">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-800 text-left text-sm text-slate-300">
-                  <thead className="bg-slate-900/90 text-xs uppercase tracking-wider text-slate-400">
+                <table className="min-w-full divide-y divide-[#E8ECE7] text-left text-sm text-[#252B27]">
+                  <thead className="bg-[#F5F6F3] text-xs font-semibold uppercase tracking-wider text-[#78817B]">
                     <tr>
                       <th className="px-6 py-3.5">Timestamp</th>
                       <th className="px-6 py-3.5">Action</th>
@@ -1035,56 +1070,56 @@ export default function AdminDashboard() {
                       <th className="px-6 py-3.5">Details</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 font-normal">
+                  <tbody className="divide-y divide-[#E8ECE7] font-normal">
                     {loadingLogs ? (
                       <tr>
-                        <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                        <td colSpan={5} className="px-6 py-8 text-center text-[#78817B]">
                           Loading audit trail...
                         </td>
                       </tr>
                     ) : auditLogs.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="px-6 py-8 text-center text-slate-400">
+                        <td colSpan={5} className="px-6 py-8 text-center text-[#78817B]">
                           No audit log records found.
                         </td>
                       </tr>
                     ) : (
                       auditLogs.map((log) => (
-                        <tr key={log.id} className="hover:bg-slate-800/40 text-xs">
-                          <td className="px-6 py-3.5 whitespace-nowrap text-slate-400">
+                        <tr key={log.id} className="hover:bg-[#F5F6F3]/50 text-xs">
+                          <td className="px-6 py-3.5 whitespace-nowrap text-[#78817B]">
                             {new Date(log.created_at).toLocaleString()}
                           </td>
                           <td className="px-6 py-3.5 whitespace-nowrap font-semibold">
                             <span
-                              className={`rounded px-2 py-0.5 ${
+                              className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${
                                 log.action === 'session_finalized'
-                                  ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                                  ? 'bg-[#EAF3ED] text-[#145C3A] border-[#21845A]/30'
                                   : log.action === 'session_started'
-                                  ? 'bg-blue-950 text-blue-300 border border-blue-800'
+                                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
                                   : log.action === 'attendance_corrected'
-                                  ? 'bg-amber-950 text-amber-300 border border-amber-800'
-                                  : 'bg-slate-800 text-slate-300'
+                                  ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                                  : 'bg-[#F5F6F3] text-[#78817B] border border-[#E8ECE7]'
                               }`}
                             >
                               {log.action}
                             </span>
                           </td>
-                          <td className="px-6 py-3.5 font-mono text-[11px] text-slate-400">
+                          <td className="px-6 py-3.5 font-mono text-[11px] text-[#78817B]">
                             {log.session_id ? log.session_id.slice(0, 8) + '...' : '-'}
                           </td>
                           <td className="px-6 py-3.5 whitespace-nowrap">
                             {log.old_status ? (
                               <span>
                                 {log.old_status} →{' '}
-                                <strong className="text-white">{log.new_status}</strong>
+                                <strong className="text-[#252B27]">{log.new_status}</strong>
                               </span>
                             ) : log.new_status ? (
-                              <span className="text-white font-medium">{log.new_status}</span>
+                              <span className="text-[#252B27] font-semibold">{log.new_status}</span>
                             ) : (
-                              <span className="text-slate-500">-</span>
+                              <span className="text-[#78817B]">-</span>
                             )}
                           </td>
-                          <td className="px-6 py-3.5 font-mono text-[11px] text-slate-400 truncate max-w-xs">
+                          <td className="px-6 py-3.5 font-mono text-[11px] text-[#78817B] truncate max-w-xs">
                             {log.details && Object.keys(log.details).length > 0
                               ? JSON.stringify(log.details)
                               : '-'}
@@ -1106,15 +1141,15 @@ export default function AdminDashboard() {
 
         {/* TAB 6: ANNOUNCEMENTS & NOTICES */}
         {activeTab === 'announcements' && (
-          <div className="mt-8 space-y-6">
+          <div className="space-y-6">
             {/* Header & Actions */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Megaphone className="h-5 w-5 text-blue-400" />
-                  <span>Institution Announcements & Circulars</span>
+                <h2 className="text-lg font-bold text-[#252B27] flex items-center gap-2">
+                  <Megaphone className="h-5 w-5 text-[#145C3A]" />
+                  <span>Institution Announcements &amp; Circulars</span>
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-[#78817B]">
                   Publish campus-wide announcements, review notices from faculty, and manage broadcast communications.
                 </p>
               </div>
@@ -1122,7 +1157,7 @@ export default function AdminDashboard() {
               <button
                 type="button"
                 onClick={() => setAnnouncementModalOpen(true)}
-                className="inline-flex items-center gap-1.5 self-start rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:bg-blue-500 transition-colors"
+                className="inline-flex items-center gap-1.5 self-start rounded-full bg-[#145C3A] px-5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[#21845A] transition-colors"
               >
                 <Megaphone className="h-4 w-4" />
                 <span>Publish Announcement</span>
@@ -1130,7 +1165,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Filter and Search Bar */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm space-y-3">
+            <div className="rounded-2xl border border-[#E8ECE7] bg-white p-4 shadow-sm space-y-3">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 {/* Category Filter Pills */}
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
@@ -1144,10 +1179,10 @@ export default function AdminDashboard() {
                       key={tab.id}
                       type="button"
                       onClick={() => setAnnouncementCategoryFilter(tab.id)}
-                      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                      className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
                         announcementCategoryFilter === tab.id
-                          ? 'bg-blue-600 text-white shadow-sm'
-                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
+                          ? 'bg-[#145C3A] text-white shadow-sm'
+                          : 'bg-white border border-[#E8ECE7] text-[#78817B] hover:bg-[#F5F6F3] hover:text-[#252B27]'
                       }`}
                     >
                       {tab.label}
@@ -1155,31 +1190,31 @@ export default function AdminDashboard() {
                   ))}
                 </div>
 
-                <div className="text-xs text-slate-400">
-                  Total Announcements: <span className="font-semibold text-white">{adminAnnouncements.length}</span>
+                <div className="text-xs font-semibold text-[#78817B]">
+                  Total Announcements: <span className="font-bold text-[#252B27]">{adminAnnouncements.length}</span>
                 </div>
               </div>
 
               {/* Search input */}
               <div className="relative">
-                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-500" />
+                <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-[#78817B]" />
                 <input
                   type="text"
                   value={announcementSearch}
                   onChange={(e) => setAnnouncementSearch(e.target.value)}
                   placeholder="Search announcements by title, content, publisher, or subject code..."
-                  className="w-full rounded-lg border border-slate-700 bg-slate-950/80 py-1.5 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-full border border-[#E8ECE7] bg-[#F5F6F3] py-2 pl-10 pr-4 text-xs text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Announcements Table */}
-            <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 shadow">
+            <div className="overflow-hidden rounded-2xl border border-[#E8ECE7] bg-white shadow-sm">
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-800 text-left text-xs text-slate-300">
-                  <thead className="bg-slate-900 uppercase tracking-wider text-slate-400">
+                <table className="min-w-full divide-y divide-[#E8ECE7] text-left text-xs text-[#252B27]">
+                  <thead className="bg-[#F5F6F3] uppercase tracking-wider text-[#78817B] font-semibold">
                     <tr>
-                      <th className="px-6 py-3.5">Title & Message</th>
+                      <th className="px-6 py-3.5">Title &amp; Message</th>
                       <th className="px-6 py-3.5">Category</th>
                       <th className="px-6 py-3.5">Target Course</th>
                       <th className="px-6 py-3.5">Published By</th>
@@ -1187,16 +1222,16 @@ export default function AdminDashboard() {
                       <th className="px-6 py-3.5 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800">
+                  <tbody className="divide-y divide-[#E8ECE7]">
                     {loadingAdminAnnouncements ? (
                       <tr>
-                        <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                        <td colSpan={6} className="px-6 py-8 text-center text-[#78817B]">
                           Loading institutional announcements...
                         </td>
                       </tr>
                     ) : filteredAnnouncements.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                        <td colSpan={6} className="px-6 py-8 text-center text-[#78817B]">
                           No announcements match your search criteria.
                         </td>
                       </tr>
@@ -1206,23 +1241,23 @@ export default function AdminDashboard() {
                         const isUrgent = ann.priority === 'Urgent' || ann.category === 'Urgent Notice'
 
                         return (
-                          <tr key={ann.id} className="hover:bg-slate-800/40 transition-colors">
+                          <tr key={ann.id} className="hover:bg-[#F5F6F3]/50 transition-colors">
                             <td className="px-6 py-4 max-w-sm">
-                              <div className="font-semibold text-white truncate text-sm">
+                              <div className="font-bold text-[#252B27] truncate text-sm">
                                 {ann.title}
                               </div>
-                              <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-400">
+                              <p className="mt-0.5 line-clamp-1 text-[11px] text-[#78817B]">
                                 {ann.description}
                               </p>
                             </td>
 
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-1.5">
-                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold border ${catStyle.badge}`}>
+                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${catStyle.badge}`}>
                                   {ann.category}
                                 </span>
                                 {isUrgent && (
-                                  <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-950 px-1.5 py-0.5 text-[10px] font-bold uppercase text-rose-300 border border-rose-800">
+                                  <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700 border border-rose-200">
                                     <Flame className="h-2.5 w-2.5" />
                                     Urgent
                                   </span>
@@ -1232,26 +1267,26 @@ export default function AdminDashboard() {
 
                             <td className="px-6 py-4 whitespace-nowrap font-mono text-xs">
                               {ann.subjects ? (
-                                <span className="rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700">
+                                <span className="rounded-full bg-[#F5F6F3] border border-[#E8ECE7] px-2.5 py-0.5 text-[#252B27]">
                                   {ann.subjects.subject_code}
                                 </span>
                               ) : (
-                                <span className="text-slate-500">General</span>
+                                <span className="text-[#78817B]">General</span>
                               )}
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-slate-300">
-                              <div>{ann.sender_name}</div>
+                            <td className="px-6 py-4 whitespace-nowrap text-[#252B27]">
+                              <div className="font-semibold">{ann.sender_name}</div>
                               {ann.profiles?.login_id && (
-                                <span className="text-[10px] font-mono text-slate-500">
+                                <span className="text-[10px] font-mono text-[#78817B]">
                                   {ann.profiles.login_id}
                                 </span>
                               )}
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap text-slate-400">
+                            <td className="px-6 py-4 whitespace-nowrap text-[#78817B]">
                               <div>{ann.publication_date || 'Date'}</div>
-                              <div className="text-[10px] text-slate-500">{ann.relative_time}</div>
+                              <div className="text-[10px] text-[#78817B]">{ann.relative_time}</div>
                             </td>
 
                             <td className="px-6 py-4 text-right whitespace-nowrap">
@@ -1259,7 +1294,7 @@ export default function AdminDashboard() {
                                 <button
                                   type="button"
                                   onClick={() => setSelectedAdminAnnouncement(ann)}
-                                  className="inline-flex items-center gap-1 rounded bg-slate-800 px-2.5 py-1 text-xs text-slate-300 hover:bg-slate-700 hover:text-white transition-colors border border-slate-700"
+                                  className="inline-flex items-center gap-1 rounded-full border border-[#E8ECE7] bg-white px-3 py-1 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3] shadow-sm transition-colors"
                                 >
                                   <Eye className="h-3 w-3" />
                                   <span>View</span>
@@ -1268,7 +1303,7 @@ export default function AdminDashboard() {
                                   type="button"
                                   onClick={(e) => handleDeleteAnnouncement(e, ann.id)}
                                   disabled={deletingAnnouncementId === ann.id}
-                                  className="inline-flex items-center gap-1 rounded bg-rose-950/60 px-2.5 py-1 text-xs text-rose-300 hover:bg-rose-900/70 hover:text-white transition-colors border border-rose-800/80 disabled:opacity-50"
+                                  className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-[#DC2626] hover:bg-red-100 disabled:opacity-50 transition-colors shadow-sm"
                                 >
                                   <Trash2 className="h-3 w-3" />
                                   <span>Delete</span>

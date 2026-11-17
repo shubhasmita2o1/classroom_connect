@@ -172,21 +172,21 @@ export default function StudentNotificationsPanel({ studentId }) {
       {/* Header bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#EAF3ED] text-[#145C3A] border border-[#21845A]/20">
             <Megaphone className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="text-lg font-bold text-[#252B27]">
                 Announcements & Notices
               </h2>
               {unreadCount > 0 && (
-                <span className="inline-flex items-center rounded-full bg-blue-950 px-2 py-0.5 text-xs font-bold text-blue-300 border border-blue-800">
+                <span className="inline-flex items-center rounded-full bg-[#EAF3ED] px-2.5 py-0.5 text-xs font-bold text-[#145C3A] border border-[#21845A]/30">
                   {unreadCount} unread
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-[#78817B]">
               Official circulars, academic notices, and department updates
             </p>
           </div>
@@ -198,13 +198,13 @@ export default function StudentNotificationsPanel({ studentId }) {
               type="button"
               onClick={handleMarkAllAsRead}
               disabled={markingAll}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#E8ECE7] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3] transition-colors disabled:opacity-50 shadow-sm"
               title="Mark all notifications as read"
             >
               {markingAll ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#78817B]" />
               ) : (
-                <CheckCheck className="h-3.5 w-3.5 text-blue-400" />
+                <CheckCheck className="h-3.5 w-3.5 text-[#145C3A]" />
               )}
               <span>Mark all read</span>
             </button>
@@ -214,20 +214,20 @@ export default function StudentNotificationsPanel({ studentId }) {
             type="button"
             onClick={() => loadNotifications(true)}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#E8ECE7] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3] transition-colors shadow-sm"
             title="Refresh announcements"
           >
-            <RefreshCw className={`h-3.5 w-3.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 text-[#78817B] ${loading ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 sm:p-4 shadow-sm space-y-3">
+      <div className="rounded-2xl border border-[#E8ECE7] bg-white p-3 sm:p-4 shadow-sm space-y-3">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           {/* Category Tabs */}
-          <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
             {[
               { id: 'ALL', label: 'All Notices' },
               { id: 'GENERAL', label: 'General' },
@@ -238,10 +238,10 @@ export default function StudentNotificationsPanel({ studentId }) {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveCategory(tab.id)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap ${
                   activeCategory === tab.id
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white'
+                    ? 'bg-[#145C3A] text-white shadow-sm'
+                    : 'bg-white border border-[#E8ECE7] text-[#78817B] hover:bg-[#F5F6F3] hover:text-[#252B27]'
                 }`}
               >
                 {tab.label}
@@ -255,9 +255,9 @@ export default function StudentNotificationsPanel({ studentId }) {
               type="checkbox"
               checked={unreadOnly}
               onChange={(e) => setUnreadOnly(e.target.checked)}
-              className="h-3.5 w-3.5 rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-blue-500"
+              className="h-3.5 w-3.5 rounded border-[#E8ECE7] text-[#145C3A] focus:ring-[#145C3A]"
             />
-            <span className="text-xs font-medium text-slate-300">
+            <span className="text-xs font-semibold text-[#252B27]">
               Unread only ({unreadCount})
             </span>
           </label>
@@ -265,13 +265,13 @@ export default function StudentNotificationsPanel({ studentId }) {
 
         {/* Search input */}
         <div className="relative">
-          <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-500" />
+          <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-[#78817B]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search notices by title, course, or message content..."
-            className="w-full rounded-lg border border-slate-700 bg-slate-950/80 py-1.5 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-full border border-[#E8ECE7] bg-[#F5F6F3] py-2 pl-10 pr-4 text-xs text-[#252B27] placeholder-[#78817B] focus:border-[#145C3A] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#145C3A] transition-colors"
           />
         </div>
       </div>
@@ -280,7 +280,7 @@ export default function StudentNotificationsPanel({ studentId }) {
       {error && (
         <div
           role="alert"
-          className="rounded-xl border border-rose-800/80 bg-rose-950/60 p-3 text-xs text-rose-200"
+          className="rounded-2xl border border-red-200 bg-[#FEF2F2] p-3 text-xs text-[#991B1B]"
         >
           {error}
         </div>
@@ -289,17 +289,17 @@ export default function StudentNotificationsPanel({ studentId }) {
       {/* Announcement List */}
       <div className="space-y-3">
         {loading ? (
-          <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-8 text-center">
-            <Loader2 className="mx-auto h-6 w-6 animate-spin text-blue-400" />
-            <p className="mt-2 text-xs text-slate-400">Loading announcements...</p>
+          <div className="rounded-2xl border border-[#E8ECE7] bg-white p-8 text-center shadow-sm">
+            <Loader2 className="mx-auto h-6 w-6 animate-spin text-[#145C3A]" />
+            <p className="mt-2 text-xs text-[#78817B]">Loading announcements...</p>
           </div>
         ) : filteredNotifications.length === 0 ? (
-          <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-10 text-center">
-            <Inbox className="mx-auto h-8 w-8 text-slate-600" />
-            <h3 className="mt-2 text-sm font-semibold text-slate-300">
+          <div className="rounded-2xl border border-[#E8ECE7] bg-white p-10 text-center shadow-sm">
+            <Inbox className="mx-auto h-8 w-8 text-[#78817B]" />
+            <h3 className="mt-2 text-sm font-semibold text-[#252B27]">
               No announcements found
             </h3>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-[#78817B]">
               {unreadOnly
                 ? 'All announcements in this category have been marked as read.'
                 : 'There are no active notices matching your current filter criteria.'}
@@ -314,10 +314,10 @@ export default function StudentNotificationsPanel({ studentId }) {
               <div
                 key={item.id}
                 onClick={() => handleOpenNotification(item)}
-                className={`group cursor-pointer rounded-xl border p-4 transition-all duration-150 ${
+                className={`group cursor-pointer rounded-2xl border p-4 transition-all duration-150 ${
                   item.is_read
-                    ? 'border-slate-800/80 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900/70'
-                    : 'border-blue-900/60 bg-slate-900/90 shadow-sm hover:border-blue-700 hover:bg-slate-900'
+                    ? 'border-[#E8ECE7] bg-white hover:border-[#145C3A]/30 hover:shadow-sm'
+                    : 'border-[#145C3A]/30 bg-[#EAF3ED]/30 shadow-sm hover:border-[#145C3A]/60'
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -327,14 +327,14 @@ export default function StudentNotificationsPanel({ studentId }) {
                       {/* Unread indicator dot */}
                       {!item.is_read && (
                         <span
-                          className="h-2 w-2 rounded-full bg-blue-500 animate-pulse"
+                          className="h-2 w-2 rounded-full bg-[#145C3A] animate-pulse"
                           title="Unread announcement"
                         />
                       )}
 
                       {/* Category Badge */}
                       <span
-                        className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${catStyle.badge}`}
+                        className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${catStyle.badge}`}
                       >
                         <span className={`h-1.5 w-1.5 rounded-full ${catStyle.dot}`} />
                         {item.category}
@@ -342,7 +342,7 @@ export default function StudentNotificationsPanel({ studentId }) {
 
                       {/* Priority Tag */}
                       {isUrgent && (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-rose-800 bg-rose-950 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-300">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2.5 py-0.5 text-[10px] font-bold uppercase text-rose-700">
                           <Flame className="h-2.5 w-2.5" />
                           Urgent
                         </span>
@@ -350,13 +350,13 @@ export default function StudentNotificationsPanel({ studentId }) {
 
                       {/* Subject Tag */}
                       {item.subjects && (
-                        <span className="rounded bg-slate-800 px-2 py-0.5 font-mono text-[11px] font-medium text-slate-300 border border-slate-700">
+                        <span className="rounded-full bg-[#F5F6F3] px-2.5 py-0.5 font-mono text-[11px] font-medium text-[#252B27] border border-[#E8ECE7]">
                           {item.subjects.subject_code}
                         </span>
                       )}
 
                       {/* Relative time */}
-                      <span className="text-slate-500 text-[11px] ml-auto sm:ml-0 flex items-center gap-1">
+                      <span className="text-[#78817B] text-[11px] ml-auto sm:ml-0 flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {item.relative_time}
                       </span>
@@ -364,26 +364,26 @@ export default function StudentNotificationsPanel({ studentId }) {
 
                     {/* Title */}
                     <h3
-                      className={`mt-2 text-sm sm:text-base font-semibold group-hover:text-blue-400 transition-colors ${
-                        item.is_read ? 'text-slate-300' : 'text-white font-bold'
+                      className={`mt-2 text-sm sm:text-base font-semibold group-hover:text-[#145C3A] transition-colors ${
+                        item.is_read ? 'text-[#252B27]' : 'text-[#252B27] font-bold'
                       }`}
                     >
                       {item.title}
                     </h3>
 
                     {/* Description preview snippet */}
-                    <p className="mt-1 line-clamp-2 text-xs text-slate-400 leading-relaxed">
+                    <p className="mt-1 line-clamp-2 text-xs text-[#78817B] leading-relaxed">
                       {item.description}
                     </p>
 
                     {/* Footer sender */}
-                    <div className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-500">
+                    <div className="mt-2 flex items-center gap-1.5 text-[11px] text-[#78817B]">
                       <User className="h-3 w-3" />
                       <span>{item.sender_name}</span>
                     </div>
                   </div>
 
-                  <ChevronRight className="h-4 w-4 text-slate-600 group-hover:text-slate-300 shrink-0 self-center transition-colors" />
+                  <ChevronRight className="h-4 w-4 text-[#78817B] group-hover:text-[#145C3A] shrink-0 self-center transition-colors" />
                 </div>
               </div>
             )

@@ -26,6 +26,7 @@ import {
   Trash2,
   Megaphone,
   Flame,
+  Clock,
 } from 'lucide-react'
 
 export default function FacultyDashboard() {
@@ -511,94 +512,187 @@ export default function FacultyDashboard() {
   const presentCount = Object.values(attendanceMap).filter((s) => s === 'present').length
   const absentCount = Object.values(attendanceMap).filter((s) => s === 'absent').length
 
+  const finalizedSessionsCount = recentSessions.filter((s) => s.status === 'finalized').length
+  const draftSessionsCount = recentSessions.filter((s) => s.status === 'draft').length
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#F5F6F3] text-[#252B27]">
       <Navbar />
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Faculty Header Card */}
-        <div className="rounded-2xl border border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 p-6 sm:p-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30">
-                <Award className="h-8 w-8" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="rounded bg-emerald-950 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-emerald-400 border border-emerald-800">
-                    Faculty Portal
-                  </span>
-                  {facultyRecord?.employee_id && (
-                    <span className="text-xs font-mono text-slate-400">
-                      ID: {facultyRecord.employee_id}
-                    </span>
-                  )}
-                </div>
-                <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
-                  {profile?.full_name || facultyRecord?.full_name || 'Faculty Member'}
-                </h1>
-                <p className="text-xs text-slate-400">
-                  Department of Computer Science & Engineering • Classroom Connect
-                </p>
+      <main className="md:pl-64 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
+        {/* Page Header (Donezo Template Format) */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#252B27]">
+                Dashboard
+              </h1>
+              <span className="rounded-full bg-[#EAF3ED] border border-[#21845A]/20 px-2.5 py-0.5 text-xs font-semibold text-[#145C3A]">
+                Faculty Portal
+              </span>
+            </div>
+            <p className="mt-1 text-xs sm:text-sm text-[#78817B]">
+              Welcome back, {profile?.full_name || facultyRecord?.full_name || 'Faculty Member'}! Record lecture attendance, manage draft sessions, and broadcast circulars.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setAnnouncementModalOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-[#145C3A] px-5 py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-[#21845A] shadow-sm transition-colors"
+            >
+              <Megaphone className="h-4 w-4" />
+              <span>Post Announcement</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => loadFacultyData(false)}
+              className="inline-flex items-center gap-2 rounded-full border border-[#E8ECE7] bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-[#252B27] hover:bg-[#F5F6F3] shadow-sm transition-colors"
+            >
+              <RefreshCw className="h-3.5 w-3.5 text-[#78817B]" />
+              <span>Refresh Roster</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Top 4 KPI Metrics Grid (Donezo Pattern) */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Card 1: Hero Deep Forest Green Card */}
+          <div className="rounded-2xl bg-[#145C3A] text-white p-5 sm:p-6 shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-white/90">
+                Finalized Sessions
+              </span>
+              <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-white">
+                <Play className="h-4 w-4 fill-white" />
               </div>
             </div>
+            <div className="my-2">
+              <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                {finalizedSessionsCount}
+              </div>
+            </div>
+            <div>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#21845A] px-2.5 py-0.5 text-[11px] font-semibold text-white/95">
+                <CheckCircle2 className="h-3 w-3" />
+                <span>Locked in curriculum</span>
+              </span>
+            </div>
+            <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/5 pointer-events-none" />
+          </div>
 
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              <button
-                type="button"
-                onClick={() => setAnnouncementModalOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:bg-blue-500 transition-colors"
-              >
-                <Megaphone className="h-3.5 w-3.5" />
-                <span>Post Announcement</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => loadFacultyData(false)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
-              >
-                <RefreshCw className="h-3.5 w-3.5" />
-                <span>Refresh Roster</span>
-              </button>
+          {/* Card 2: White Card - Allocated Subjects */}
+          <div className="rounded-2xl border border-[#E8ECE7] bg-white p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#78817B]">
+                Allocated Subjects
+              </span>
+              <div className="h-8 w-8 rounded-full border border-[#E8ECE7] flex items-center justify-center text-[#78817B]">
+                <BookOpen className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="my-2">
+              <div className="text-3xl sm:text-4xl font-bold text-[#252B27] tracking-tight">
+                {allocatedSubjects.length}
+              </div>
+            </div>
+            <div>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#EAF3ED] px-2.5 py-0.5 text-[11px] font-semibold text-[#145C3A]">
+                <Award className="h-3 w-3" />
+                <span>Active teaching courses</span>
+              </span>
             </div>
           </div>
 
-          {/* Allocated Subjects Pill List */}
-          <div className="mt-6 border-t border-slate-800/80 pt-4">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Allocated Teaching Subjects:
-            </span>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {allocatedSubjects.length === 0 ? (
-                <span className="text-xs text-slate-500">
-                  No allocated subjects found. Contact administration for subject assignment.
-                </span>
-              ) : (
-                allocatedSubjects.map((sub) => (
-                  <button
-                    key={sub.id}
-                    type="button"
-                    onClick={() => setSessionSubject(sub)}
-                    className={`inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
-                      sessionSubject?.id === sub.id
-                        ? 'border-blue-500 bg-blue-950/60 text-blue-300'
-                        : 'border-slate-800 bg-slate-900 text-slate-300 hover:border-slate-700'
-                    }`}
-                  >
-                    <BookOpen className="h-3.5 w-3.5 text-blue-400" />
-                    <span>
-                      {sub.subject_code} — {sub.subject_name}
-                    </span>
-                  </button>
-                ))
-              )}
+          {/* Card 3: White Card - Active Roster */}
+          <div className="rounded-2xl border border-[#E8ECE7] bg-white p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#78817B]">
+                Classroom Roster
+              </span>
+              <div className="h-8 w-8 rounded-full border border-[#E8ECE7] flex items-center justify-center text-[#78817B]">
+                <UserCheck className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="my-2">
+              <div className="text-3xl sm:text-4xl font-bold text-[#252B27] tracking-tight">
+                {studentsRoster.length}
+              </div>
+            </div>
+            <div>
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#F5F6F3] border border-[#E8ECE7] px-2.5 py-0.5 text-[11px] font-semibold text-[#78817B]">
+                <Calendar className="h-3 w-3" />
+                <span>Enrolled students</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Card 4: White Card - Draft Sessions */}
+          <div className="rounded-2xl border border-[#E8ECE7] bg-white p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[140px]">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-[#78817B]">
+                Draft Sessions Pending
+              </span>
+              <div className="h-8 w-8 rounded-full border border-[#E8ECE7] flex items-center justify-center text-[#78817B]">
+                <Clock className="h-4 w-4" />
+              </div>
+            </div>
+            <div className="my-2">
+              <div className="text-3xl sm:text-4xl font-bold text-[#252B27] tracking-tight">
+                {draftSessionsCount}
+              </div>
+            </div>
+            <div>
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800">
+                <span>Requires finalization</span>
+              </span>
             </div>
           </div>
         </div>
 
+        {/* Allocated Subjects Pill List Card */}
+        <div className="rounded-2xl border border-[#E8ECE7] bg-white p-5 shadow-sm space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#78817B]">
+              Select Allocated Teaching Course:
+            </span>
+            {facultyRecord?.employee_id && (
+              <span className="font-mono text-xs text-[#78817B]">
+                Employee ID: <strong className="text-[#252B27]">{facultyRecord.employee_id}</strong>
+              </span>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2 pt-1">
+            {allocatedSubjects.length === 0 ? (
+              <span className="text-xs text-[#78817B] py-1">
+                No allocated subjects found. Contact administration for subject assignment.
+              </span>
+            ) : (
+              allocatedSubjects.map((sub) => (
+                <button
+                  key={sub.id}
+                  type="button"
+                  onClick={() => setSessionSubject(sub)}
+                  className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition-all ${
+                    sessionSubject?.id === sub.id
+                      ? 'bg-[#145C3A] text-white shadow-sm'
+                      : 'border border-[#E8ECE7] bg-[#F5F6F3] text-[#252B27] hover:bg-white hover:border-[#145C3A]/30'
+                  }`}
+                >
+                  <BookOpen className="h-3.5 w-3.5" />
+                  <span>
+                    {sub.subject_code} — {sub.subject_name}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+
         {/* Notifications / Alerts */}
-        <div className="mt-6 space-y-3">
+        <div className="space-y-3">
           {statusError && (
             <AlertBanner
               type="error"
@@ -623,29 +717,29 @@ export default function FacultyDashboard() {
         </div>
 
         {/* Main Grid: Attendance Session Lifecycle & Recent History */}
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Left 2 Cols: Active Attendance Workflow */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-800 pb-4">
+          <div id="attendance-workspace" className="lg:col-span-2 space-y-6">
+            <div className="rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-sm">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-[#E8ECE7] pb-4">
                 <div>
-                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                    <UserCheck className="h-5 w-5 text-emerald-400" />
+                  <h2 className="text-lg font-bold text-[#252B27] flex items-center gap-2">
+                    <UserCheck className="h-5 w-5 text-[#145C3A]" />
                     <span>Attendance Lifecycle Manager</span>
                   </h2>
-                  <p className="text-xs text-slate-400">
-                    Draft, take, and finalize classroom attendance with automatic active roster validation.
+                  <p className="text-xs text-[#78817B]">
+                    Draft, record, and finalize classroom attendance with automatic active roster validation.
                   </p>
                 </div>
 
                 {activeSession && (
                   <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
                       activeSession.status === 'finalized'
-                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                        ? 'bg-[#EAF3ED] text-[#145C3A] border border-[#21845A]/30'
                         : activeSession.status === 'in_progress'
-                        ? 'bg-blue-950 text-blue-300 border border-blue-800'
-                        : 'bg-amber-950 text-amber-300 border border-amber-800'
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                        : 'bg-amber-50 text-amber-800 border border-amber-200'
                     }`}
                   >
                     {activeSession.status.replace('_', ' ')}
@@ -654,13 +748,13 @@ export default function FacultyDashboard() {
               </div>
 
               {/* Action Buttons Row */}
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-2.5">
                 {!activeSession ? (
                   <button
                     type="button"
                     onClick={handleCreateDraftSession}
                     disabled={busy || !sessionSubject}
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-500 disabled:opacity-50 transition-colors shadow-sm"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#145C3A] px-5 py-2.5 text-xs font-semibold text-white hover:bg-[#21845A] disabled:opacity-50 transition-colors shadow-sm"
                   >
                     <PlusCircle className="h-4 w-4" />
                     <span>Create Draft Session ({sessionSubject?.subject_code || 'Select Subject'})</span>
@@ -671,15 +765,15 @@ export default function FacultyDashboard() {
                       type="button"
                       onClick={handleStartSession}
                       disabled={busy}
-                      className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 transition-colors shadow-sm"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#145C3A] px-5 py-2.5 text-xs font-semibold text-white hover:bg-[#21845A] disabled:opacity-50 transition-colors shadow-sm"
                     >
-                      <Play className="h-4 w-4" />
+                      <Play className="h-4 w-4 fill-white" />
                       <span>Start Session #{activeSession.session_number}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setActiveSession(null)}
-                      className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-medium text-slate-300 hover:text-white"
+                      className="rounded-full border border-[#E8ECE7] bg-white px-4 py-2.5 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3]"
                     >
                       Cancel Draft
                     </button>
@@ -690,7 +784,7 @@ export default function FacultyDashboard() {
                       type="button"
                       onClick={() => handleMarkAll('present')}
                       disabled={busy}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-800 bg-emerald-950/60 px-3 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-900/60 disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-[#21845A]/30 bg-[#EAF3ED] px-4 py-2 text-xs font-semibold text-[#145C3A] hover:bg-[#145C3A] hover:text-white disabled:opacity-50 transition-colors shadow-sm"
                     >
                       <Check className="h-3.5 w-3.5" />
                       <span>Mark All Present</span>
@@ -700,7 +794,7 @@ export default function FacultyDashboard() {
                       type="button"
                       onClick={() => handleMarkAll('absent')}
                       disabled={busy}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-rose-800 bg-rose-950/60 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-rose-900/60 disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-semibold text-rose-700 hover:bg-[#DC2626] hover:text-white disabled:opacity-50 transition-colors shadow-sm"
                     >
                       <XCircle className="h-3.5 w-3.5" />
                       <span>Mark All Absent</span>
@@ -710,7 +804,7 @@ export default function FacultyDashboard() {
                       type="button"
                       onClick={handleFinalizeSession}
                       disabled={busy}
-                      className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500 disabled:opacity-50 ml-auto shadow-sm"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#145C3A] px-5 py-2 text-xs font-semibold text-white hover:bg-[#21845A] disabled:opacity-50 ml-auto shadow-sm transition-colors"
                     >
                       <FileCheck2 className="h-4 w-4" />
                       <span>Finalize Attendance</span>
@@ -718,9 +812,9 @@ export default function FacultyDashboard() {
                   </>
                 ) : (
                   <div className="flex items-center justify-between w-full">
-                    <span className="text-xs text-emerald-400 font-medium flex items-center gap-1.5">
+                    <span className="text-xs text-[#145C3A] font-semibold flex items-center gap-1.5">
                       <CheckCircle2 className="h-4 w-4" />
-                      <span>Attendance Finalized & Locked</span>
+                      <span>Attendance Finalized &amp; Locked</span>
                     </span>
                     <button
                       type="button"
@@ -728,7 +822,7 @@ export default function FacultyDashboard() {
                         setActiveSession(null)
                         setAttendanceMap({})
                       }}
-                      className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white"
+                      className="rounded-full border border-[#E8ECE7] bg-white px-4 py-2 text-xs font-semibold text-[#252B27] hover:bg-[#F5F6F3] shadow-sm"
                     >
                       Start New Session
                     </button>
@@ -738,25 +832,25 @@ export default function FacultyDashboard() {
 
               {/* Progress Summary if Session Active */}
               {activeSession && (
-                <div className="mt-5 rounded-lg border border-slate-800 bg-slate-950 p-4">
+                <div className="mt-5 rounded-2xl border border-[#E8ECE7] bg-[#F5F6F3]/50 p-4">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400">Classroom Roster Marked:</span>
-                    <span className="font-semibold text-white">
+                    <span className="text-[#78817B]">Classroom Roster Marked:</span>
+                    <span className="font-bold text-[#252B27]">
                       {markedCount} / {studentsRoster.length} Students
                     </span>
                   </div>
-                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-800">
+                  <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-[#E8ECE7]">
                     <div
-                      className="h-full bg-blue-500 transition-all duration-300"
+                      className="h-full bg-[#145C3A] transition-all duration-300 rounded-full"
                       style={{
                         width: `${studentsRoster.length ? (markedCount / studentsRoster.length) * 100 : 0}%`,
                       }}
                     />
                   </div>
-                  <div className="mt-3 flex items-center justify-between text-[11px] text-slate-400">
-                    <span className="text-emerald-400 font-medium">Present: {presentCount}</span>
-                    <span className="text-rose-400 font-medium">Absent: {absentCount}</span>
-                    <span className="text-amber-400 font-medium">
+                  <div className="mt-3 flex items-center justify-between text-[11px] font-semibold">
+                    <span className="text-[#145C3A]">Present: {presentCount}</span>
+                    <span className="text-[#DC2626]">Absent: {absentCount}</span>
+                    <span className="text-amber-700">
                       Unmarked: {Math.max(0, studentsRoster.length - markedCount)}
                     </span>
                   </div>
@@ -764,26 +858,26 @@ export default function FacultyDashboard() {
               )}
 
               {/* Student Roster Marking Table */}
-              <div className="mt-6 overflow-hidden rounded-xl border border-slate-800">
+              <div className="mt-6 overflow-hidden rounded-2xl border border-[#E8ECE7] bg-white">
                 <div className="max-h-96 overflow-y-auto">
-                  <table className="min-w-full divide-y divide-slate-800 text-left text-xs text-slate-300">
-                    <thead className="sticky top-0 bg-slate-900 uppercase tracking-wider text-slate-400 z-10">
+                  <table className="min-w-full divide-y divide-[#E8ECE7] text-left text-xs text-[#252B27]">
+                    <thead className="sticky top-0 bg-[#F5F6F3] uppercase tracking-wider text-[#78817B] font-semibold z-10">
                       <tr>
                         <th className="px-4 py-3">Roll No.</th>
                         <th className="px-4 py-3">Student Name</th>
                         <th className="px-4 py-3 text-right">Attendance Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800 bg-slate-950/60 font-normal">
+                    <tbody className="divide-y divide-[#E8ECE7] font-normal">
                       {loadingInitial ? (
                         <tr>
-                          <td colSpan={3} className="px-4 py-6 text-center text-slate-500">
+                          <td colSpan={3} className="px-4 py-8 text-center text-[#78817B]">
                             Loading classroom roster...
                           </td>
                         </tr>
                       ) : studentsRoster.length === 0 ? (
                         <tr>
-                          <td colSpan={3} className="px-4 py-6 text-center text-slate-500">
+                          <td colSpan={3} className="px-4 py-8 text-center text-[#78817B]">
                             No active students in classroom roster.
                           </td>
                         </tr>
@@ -791,24 +885,24 @@ export default function FacultyDashboard() {
                         studentsRoster.map((student) => {
                           const currentStatus = attendanceMap[student.id]
                           return (
-                            <tr key={student.id} className="hover:bg-slate-900/60 transition-colors">
-                              <td className="px-4 py-2.5 font-mono font-medium text-slate-200">
+                            <tr key={student.id} className="hover:bg-[#F5F6F3]/50 transition-colors">
+                              <td className="px-4 py-3 font-mono font-bold text-[#145C3A]">
                                 {student.roll_number}
                               </td>
-                              <td className="px-4 py-2.5 font-medium text-white">
+                              <td className="px-4 py-3 font-semibold text-[#252B27]">
                                 {student.full_name}
                               </td>
-                              <td className="px-4 py-2.5 text-right">
+                              <td className="px-4 py-3 text-right">
                                 {activeSession?.status === 'in_progress' ? (
                                   <div className="inline-flex items-center gap-1.5">
                                     <button
                                       type="button"
                                       onClick={() => handleMarkStudent(student.id, 'present')}
                                       disabled={busy}
-                                      className={`rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
+                                      className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
                                         currentStatus === 'present'
-                                          ? 'bg-emerald-600 text-white'
-                                          : 'bg-slate-800 text-slate-400 hover:bg-emerald-950 hover:text-emerald-300 border border-slate-700'
+                                          ? 'bg-[#145C3A] text-white shadow-sm'
+                                          : 'border border-[#E8ECE7] bg-white text-[#78817B] hover:bg-[#EAF3ED] hover:text-[#145C3A]'
                                       }`}
                                     >
                                       Present
@@ -817,10 +911,10 @@ export default function FacultyDashboard() {
                                       type="button"
                                       onClick={() => handleMarkStudent(student.id, 'absent')}
                                       disabled={busy}
-                                      className={`rounded px-2.5 py-1 text-xs font-semibold transition-colors ${
+                                      className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
                                         currentStatus === 'absent'
-                                          ? 'bg-rose-600 text-white'
-                                          : 'bg-slate-800 text-slate-400 hover:bg-rose-950 hover:text-rose-300 border border-slate-700'
+                                          ? 'bg-[#DC2626] text-white shadow-sm'
+                                          : 'border border-[#E8ECE7] bg-white text-[#78817B] hover:bg-rose-50 hover:text-rose-700'
                                       }`}
                                     >
                                       Absent
@@ -828,16 +922,16 @@ export default function FacultyDashboard() {
                                   </div>
                                 ) : currentStatus ? (
                                   <span
-                                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${
+                                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${
                                       currentStatus === 'present'
-                                        ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                                        : 'bg-rose-950 text-rose-300 border border-rose-800'
+                                        ? 'bg-[#EAF3ED] text-[#145C3A] border border-[#21845A]/30'
+                                        : 'bg-rose-50 text-rose-700 border border-rose-200'
                                     }`}
                                   >
                                     {currentStatus}
                                   </span>
                                 ) : (
-                                  <span className="text-slate-600">Pending</span>
+                                  <span className="text-[#78817B]">Pending</span>
                                 )}
                               </td>
                             </tr>
@@ -853,17 +947,20 @@ export default function FacultyDashboard() {
 
           {/* Right Col: Recent Sessions History */}
           <div className="space-y-6">
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-blue-400" />
+            <div id="recent-sessions" className="rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between border-b border-[#E8ECE7] pb-3">
+                <h3 className="text-sm font-bold text-[#252B27] flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-[#145C3A]" />
                   <span>Recent Lecture Sessions</span>
                 </h3>
+                <span className="text-xs text-[#78817B] font-medium">
+                  {recentSessions.length} Recorded
+                </span>
               </div>
 
               <div className="mt-4 space-y-3">
                 {recentSessions.length === 0 ? (
-                  <p className="text-xs text-slate-500 text-center py-4">
+                  <p className="text-xs text-[#78817B] text-center py-6">
                     No previous sessions recorded.
                   </p>
                 ) : (
@@ -871,22 +968,24 @@ export default function FacultyDashboard() {
                     <div
                       key={sess.id}
                       onClick={() => handleSelectSession(sess)}
-                      className={`cursor-pointer rounded-lg border p-3.5 transition-colors ${
+                      className={`cursor-pointer rounded-2xl border p-3.5 transition-all ${
                         activeSession?.id === sess.id
-                          ? 'border-blue-500 bg-blue-950/30'
-                          : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'
+                          ? 'border-[#145C3A] bg-[#EAF3ED]/40 shadow-sm'
+                          : 'border-[#E8ECE7] bg-white hover:border-[#145C3A]/40'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-2 text-xs font-semibold text-white">
-                        <span className="truncate">{sess.subjects?.subject_code || 'Subject'}</span>
+                      <div className="flex items-center justify-between gap-2 text-xs font-semibold text-[#252B27]">
+                        <span className="truncate font-mono font-bold text-[#145C3A]">
+                          {sess.subjects?.subject_code || 'Subject'}
+                        </span>
                         <div className="flex items-center gap-1.5 shrink-0">
                           <span
-                            className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
+                            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
                               sess.status === 'finalized'
-                                ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                                ? 'bg-[#EAF3ED] text-[#145C3A] border border-[#21845A]/30'
                                 : sess.status === 'in_progress'
-                                ? 'bg-blue-950 text-blue-400 border border-blue-800'
-                                : 'bg-amber-950 text-amber-400 border border-amber-800'
+                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                : 'bg-amber-50 text-amber-800 border border-amber-200'
                             }`}
                           >
                             {sess.status.replace('_', ' ')}
@@ -898,16 +997,16 @@ export default function FacultyDashboard() {
                               disabled={busy || deletingDraft}
                               title="Delete Draft Session"
                               aria-label={`Delete draft session ${sess.subjects?.subject_code || ''} #${sess.session_number}`}
-                              className="inline-flex h-6 w-6 items-center justify-center rounded border border-rose-900/70 bg-rose-950/50 text-rose-400 hover:bg-rose-900/70 hover:text-rose-200 disabled:opacity-50 transition-colors"
+                              className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-red-200 bg-red-50 text-[#DC2626] hover:bg-red-100 disabled:opacity-50 transition-colors shadow-sm"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
                           )}
                         </div>
                       </div>
-                      <div className="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+                      <div className="mt-1.5 flex items-center justify-between text-[11px] text-[#78817B]">
                         <span>Date: {sess.session_date}</span>
-                        <span>Session #{sess.session_number}</span>
+                        <span className="font-mono">Session #{sess.session_number}</span>
                       </div>
                     </div>
                   ))
@@ -916,14 +1015,14 @@ export default function FacultyDashboard() {
             </div>
 
             {/* My Published Announcements Card */}
-            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div id="announcements-section" className="rounded-2xl border border-[#E8ECE7] bg-white p-6 shadow-sm">
+              <div className="flex items-center justify-between border-b border-[#E8ECE7] pb-3">
                 <div className="flex items-center gap-2">
-                  <Megaphone className="h-4 w-4 text-emerald-400" />
-                  <h3 className="text-sm font-bold text-white">
-                    My Announcements
+                  <Megaphone className="h-4 w-4 text-[#145C3A]" />
+                  <h3 className="text-sm font-bold text-[#252B27]">
+                    My Published Announcements Card
                   </h3>
-                  <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400">
+                  <span className="rounded-full bg-[#EAF3ED] px-2 py-0.5 text-[10px] font-bold text-[#145C3A]">
                     {announcements.length}
                   </span>
                 </div>
@@ -931,7 +1030,7 @@ export default function FacultyDashboard() {
                 <button
                   type="button"
                   onClick={() => setAnnouncementModalOpen(true)}
-                  className="inline-flex items-center gap-1 rounded bg-blue-600/20 px-2 py-1 text-[11px] font-semibold text-blue-400 hover:bg-blue-600/30 transition-colors border border-blue-500/30"
+                  className="inline-flex items-center gap-1 rounded-full bg-[#145C3A] px-3 py-1 text-[11px] font-semibold text-white hover:bg-[#21845A] transition-colors shadow-sm"
                 >
                   <PlusCircle className="h-3 w-3" />
                   <span>New</span>
@@ -940,14 +1039,14 @@ export default function FacultyDashboard() {
 
               <div className="mt-4 space-y-3">
                 {loadingAnnouncements ? (
-                  <p className="text-xs text-slate-500 text-center py-4">
+                  <p className="text-xs text-[#78817B] text-center py-6">
                     Loading announcements...
                   </p>
                 ) : announcements.length === 0 ? (
                   <div className="text-center py-6">
-                    <Megaphone className="mx-auto h-6 w-6 text-slate-600 mb-1" />
-                    <p className="text-xs text-slate-400 font-medium">No announcements published yet</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
+                    <Megaphone className="mx-auto h-6 w-6 text-[#78817B] mb-1" />
+                    <p className="text-xs text-[#252B27] font-semibold">No announcements published yet</p>
+                    <p className="text-[11px] text-[#78817B] mt-0.5">
                       Click &quot;New&quot; to publish a classroom or academic notice.
                     </p>
                   </div>
@@ -960,7 +1059,7 @@ export default function FacultyDashboard() {
                       <div
                         key={ann.id}
                         onClick={() => setSelectedAnnouncement(ann)}
-                        className="group cursor-pointer rounded-lg border border-slate-800 bg-slate-900/60 p-3 hover:border-slate-700 transition-colors"
+                        className="group cursor-pointer rounded-2xl border border-[#E8ECE7] bg-white p-3.5 hover:border-[#145C3A]/40 hover:shadow-sm transition-all"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0 flex-1">
@@ -969,21 +1068,21 @@ export default function FacultyDashboard() {
                                 {ann.category}
                               </span>
                               {isUrgent && (
-                                <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-950 px-1.5 py-0.5 font-bold uppercase text-rose-300 border border-rose-800">
+                                <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-50 px-1.5 py-0.5 font-bold uppercase text-rose-700 border border-rose-200">
                                   <Flame className="h-2.5 w-2.5" />
                                   Urgent
                                 </span>
                               )}
                               {ann.subjects && (
-                                <span className="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-slate-300">
+                                <span className="rounded-full bg-[#F5F6F3] border border-[#E8ECE7] px-2 py-0.5 font-mono text-[#252B27]">
                                   {ann.subjects.subject_code}
                                 </span>
                               )}
                             </div>
-                            <h4 className="mt-1.5 text-xs font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
+                            <h4 className="mt-1.5 text-xs font-bold text-[#252B27] group-hover:text-[#145C3A] transition-colors truncate">
                               {ann.title}
                             </h4>
-                            <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-400">
+                            <p className="mt-0.5 line-clamp-1 text-[11px] text-[#78817B]">
                               {ann.description}
                             </p>
                           </div>
@@ -994,14 +1093,14 @@ export default function FacultyDashboard() {
                               onClick={(e) => handleDeleteAnnouncement(e, ann.id)}
                               disabled={deletingAnnouncementId === ann.id}
                               title="Delete Announcement"
-                              className="rounded p-1 text-slate-500 hover:bg-rose-950 hover:text-rose-400 transition-colors disabled:opacity-50"
+                              className="rounded-full p-1.5 text-[#78817B] hover:bg-red-50 hover:text-[#DC2626] transition-colors disabled:opacity-50"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         </div>
 
-                        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 border-t border-slate-800/60 pt-1.5">
+                        <div className="mt-2 flex items-center justify-between text-[10px] text-[#78817B] border-t border-[#E8ECE7] pt-1.5">
                           <span>{ann.publication_date || 'Date'}</span>
                           <span>{ann.relative_time}</span>
                         </div>
