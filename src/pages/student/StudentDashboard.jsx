@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import Navbar from '../../components/Navbar'
+import StudentNotificationsPanel from '../../components/StudentNotificationsPanel'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import {
@@ -351,6 +352,9 @@ export default function StudentDashboard() {
             </div>
           </div>
         )}
+
+        {/* Announcements & Academic Notices */}
+        <StudentNotificationsPanel studentId={studentRecord?.id} />
 
         {/* Subject-Wise Attendance Breakdown */}
         <div className="mt-8 space-y-4">

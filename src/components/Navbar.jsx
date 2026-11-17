@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
+import { getStudentUnreadCount } from '../services/notificationService'
 import ChangePasswordModal from './ChangePasswordModal'
 import {
   GraduationCap,
@@ -12,14 +14,53 @@ import {
   X,
   User,
   KeyRound,
+  Bell,
 } from 'lucide-react'
 
 export default function Navbar() {
-  const { profile, role, signOut } = useAuth()
+  const { profile, role, user, signOut } = useAuth()
   const navigate = useNavigate()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const [passwordModalOpen, setPasswordModalOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    let ignore = false
+    async function updateCount() {
+      if (role === 'student' && user?.id) {
+        const { data: stu } = await supabase
+          .from('students')
+          .select('id')
+          .eq('profile_id', user.id)
+          .maybeSingle()
+        if (stu?.id && !ignore) {
+          const count = await getStudentUnreadCount(stu.id)
+          if (!ignore) setUnreadCount(count)
+        }
+      }
+    }
+
+    updateCount()
+
+    const handleUpdate = () => {
+      updateCount()
+    }
+    window.addEventListener('classroom:notifications-updated', handleUpdate)
+    return () => {
+      ignore = true
+      window.removeEventListener('classroom:notifications-updated', handleUpdate)
+    }
+  }, [role, user])
+
+  const handleNotificationClick = () => {
+    const el = document.getElementById('announcements-section')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      navigate('/student')
+    }
+  }
 
   const handleSignOut = async () => {
     setSigningOut(true)
@@ -101,6 +142,24 @@ export default function Navbar() {
               </div>
             )}
 
+            {/* Student Notifications Bell */}
+            {role === 'student' && (
+              <button
+                type="button"
+                onClick={handleNotificationClick}
+                className="relative inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-800/80 p-2 text-slate-300 transition-colors hover:border-slate-600 hover:bg-slate-700 hover:text-white"
+                title={`Announcements (${unreadCount} unread)`}
+                aria-label={`View announcements, ${unreadCount} unread`}
+              >
+                <Bell className="h-4 w-4" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-slate-900">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+            )}
+
             {/* Change Password Button */}
             <button
               type="button"
@@ -125,8 +184,24 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Mobile menu trigger */}
-          <div className="flex md:hidden">
+          {/* Mobile menu trigger & notification */}
+          <div className="flex items-center gap-1 md:hidden">
+            {role === 'student' && (
+              <button
+                type="button"
+                onClick={handleNotificationClick}
+                className="relative rounded-lg p-2 text-slate-300 hover:bg-slate-800 hover:text-white"
+                aria-label={`View announcements, ${unreadCount} unread`}
+              >
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[9px] font-bold text-white ring-2 ring-slate-900">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -159,6 +234,27 @@ export default function Navbar() {
                   <span>Role: {roleBadgeConfig.label}</span>
                 </div>
               </div>
+            )}
+
+            {role === 'student' && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  handleNotificationClick()
+                }}
+                className="flex w-full items-center justify-between rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-medium text-slate-200 hover:bg-slate-700 hover:text-white"
+              >
+                <div className="flex items-center gap-2">
+                  <Bell className="h-4 w-4 text-blue-400" />
+                  <span>Announcements</span>
+                </div>
+                {unreadCount > 0 && (
+                  <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-bold text-white">
+                    {unreadCount} unread
+                  </span>
+                )}
+              </button>
             )}
 
             <button

@@ -3,8 +3,15 @@ import Navbar from '../../components/Navbar'
 import AlertBanner from '../../components/AlertBanner'
 import DeleteAccountModal from '../../components/DeleteAccountModal'
 import AcademicManagementPanel from '../../components/AcademicManagementPanel'
+import CreateAnnouncementModal from '../../components/CreateAnnouncementModal'
+import NotificationDetailModal from '../../components/NotificationDetailModal'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import {
+  fetchAdminAnnouncements,
+  deleteAnnouncement,
+  CATEGORY_STYLES,
+} from '../../services/notificationService'
 import {
   Users,
   Award,
@@ -19,6 +26,9 @@ import {
   Search,
   Lock,
   Trash2,
+  Megaphone,
+  Flame,
+  Eye,
 } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -33,6 +43,16 @@ export default function AdminDashboard() {
     totalSessions: 0,
   })
   const [loadingStats, setLoadingStats] = useState(true)
+
+  // Announcements state
+  const [adminAnnouncements, setAdminAnnouncements] = useState([])
+  const [loadingAdminAnnouncements, setLoadingAdminAnnouncements] = useState(false)
+  const [announcementModalOpen, setAnnouncementModalOpen] = useState(false)
+  const [selectedAdminAnnouncement, setSelectedAdminAnnouncement] = useState(null)
+  const [deletingAnnouncementId, setDeletingAnnouncementId] = useState(null)
+  const [announcementCategoryFilter, setAnnouncementCategoryFilter] = useState('ALL')
+  const [announcementSearch, setAnnouncementSearch] = useState('')
+  const [subjectsList, setSubjectsList] = useState([])
 
   // Directory state
   const [profilesList, setProfilesList] = useState([])
@@ -130,6 +150,41 @@ export default function AdminDashboard() {
       setLoadingLogs(false)
     }
   }, [])
+
+  // Load admin announcements
+  const loadAdminAnnouncements = useCallback(async (showLoading = false) => {
+    if (showLoading) setLoadingAdminAnnouncements(true)
+    try {
+      const [
+        { data: notifs },
+        { data: subs },
+      ] = await Promise.all([
+        fetchAdminAnnouncements(),
+        supabase.from('subjects').select('id, subject_code, subject_name').eq('is_active', true).order('subject_code'),
+      ])
+      if (notifs) setAdminAnnouncements(notifs)
+      if (subs) setSubjectsList(subs)
+    } catch (err) {
+      console.error('Error loading admin announcements:', err)
+    } finally {
+      setLoadingAdminAnnouncements(false)
+    }
+  }, [])
+
+  const handleDeleteAnnouncement = async (e, id) => {
+    e.stopPropagation()
+    if (!window.confirm('Are you sure you want to delete this announcement? This will remove it for all users.')) return
+    setDeletingAnnouncementId(id)
+    try {
+      await deleteAnnouncement(id)
+      setAdminAnnouncements((prev) => prev.filter((a) => a.id !== id))
+    } catch (err) {
+      console.error(err)
+      alert(`Failed to delete announcement: ${err.message}`)
+    } finally {
+      setDeletingAnnouncementId(null)
+    }
+  }
 
   useEffect(() => {
     let ignore = false
@@ -351,6 +406,45 @@ export default function AdminDashboard() {
     return matchesSearch && matchesRole
   })
 
+  // Filtered announcements
+  const filteredAnnouncements = adminAnnouncements.filter((item) => {
+    if (announcementCategoryFilter !== 'ALL') {
+      if (
+        announcementCategoryFilter === 'GENERAL' &&
+        !item.category.includes('General') &&
+        !item.category.includes('Holiday') &&
+        !item.category.includes('Important')
+      ) {
+        return false
+      }
+      if (
+        announcementCategoryFilter === 'ACADEMIC' &&
+        !item.category.includes('Academic') &&
+        !item.category.includes('Examination')
+      ) {
+        return false
+      }
+      if (
+        announcementCategoryFilter === 'URGENT' &&
+        !item.category.includes('Urgent') &&
+        item.priority !== 'Urgent'
+      ) {
+        return false
+      }
+    }
+    if (announcementSearch.trim()) {
+      const q = announcementSearch.toLowerCase()
+      const matchTitle = item.title?.toLowerCase().includes(q)
+      const matchDesc = item.description?.toLowerCase().includes(q)
+      const matchSender = item.sender_name?.toLowerCase().includes(q)
+      const matchSub =
+        item.subjects?.subject_code?.toLowerCase().includes(q) ||
+        item.subjects?.subject_name?.toLowerCase().includes(q)
+      if (!matchTitle && !matchDesc && !matchSender && !matchSub) return false
+    }
+    return true
+  })
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <Navbar />
@@ -379,6 +473,7 @@ export default function AdminDashboard() {
               loadStats()
               if (activeTab === 'directory') loadProfiles()
               if (activeTab === 'audit') loadAuditLogs()
+              if (activeTab === 'announcements') loadAdminAnnouncements()
             }}
             className="inline-flex items-center gap-1.5 self-start rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
           >
@@ -432,6 +527,20 @@ export default function AdminDashboard() {
             >
               <BookOpen className="h-4 w-4" />
               <span>Academic Management</span>
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('announcements')
+                loadAdminAnnouncements(true)
+              }}
+              className={`pb-3 border-b-2 transition-colors flex items-center gap-1.5 ${
+                activeTab === 'announcements'
+                  ? 'border-blue-500 text-blue-400'
+                  : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Megaphone className="h-4 w-4" />
+              <span>Announcements</span>
             </button>
             <button
               onClick={() => setActiveTab('audit')}
@@ -994,6 +1103,188 @@ export default function AdminDashboard() {
         {activeTab === 'academics' && (
           <AcademicManagementPanel onDataChanged={loadStats} />
         )}
+
+        {/* TAB 6: ANNOUNCEMENTS & NOTICES */}
+        {activeTab === 'announcements' && (
+          <div className="mt-8 space-y-6">
+            {/* Header & Actions */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Megaphone className="h-5 w-5 text-blue-400" />
+                  <span>Institution Announcements & Circulars</span>
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Publish campus-wide announcements, review notices from faculty, and manage broadcast communications.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setAnnouncementModalOpen(true)}
+                className="inline-flex items-center gap-1.5 self-start rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:bg-blue-500 transition-colors"
+              >
+                <Megaphone className="h-4 w-4" />
+                <span>Publish Announcement</span>
+              </button>
+            </div>
+
+            {/* Filter and Search Bar */}
+            <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 shadow-sm space-y-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                {/* Category Filter Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+                  {[
+                    { id: 'ALL', label: 'All Notices' },
+                    { id: 'GENERAL', label: 'General' },
+                    { id: 'ACADEMIC', label: 'Academic' },
+                    { id: 'URGENT', label: 'Urgent' },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setAnnouncementCategoryFilter(tab.id)}
+                      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors whitespace-nowrap ${
+                        announcementCategoryFilter === tab.id
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="text-xs text-slate-400">
+                  Total Announcements: <span className="font-semibold text-white">{adminAnnouncements.length}</span>
+                </div>
+              </div>
+
+              {/* Search input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-500" />
+                <input
+                  type="text"
+                  value={announcementSearch}
+                  onChange={(e) => setAnnouncementSearch(e.target.value)}
+                  placeholder="Search announcements by title, content, publisher, or subject code..."
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950/80 py-1.5 pl-9 pr-3 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Announcements Table */}
+            <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 shadow">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-slate-800 text-left text-xs text-slate-300">
+                  <thead className="bg-slate-900 uppercase tracking-wider text-slate-400">
+                    <tr>
+                      <th className="px-6 py-3.5">Title & Message</th>
+                      <th className="px-6 py-3.5">Category</th>
+                      <th className="px-6 py-3.5">Target Course</th>
+                      <th className="px-6 py-3.5">Published By</th>
+                      <th className="px-6 py-3.5">Published Date</th>
+                      <th className="px-6 py-3.5 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800">
+                    {loadingAdminAnnouncements ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                          Loading institutional announcements...
+                        </td>
+                      </tr>
+                    ) : filteredAnnouncements.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                          No announcements match your search criteria.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredAnnouncements.map((ann) => {
+                        const catStyle = CATEGORY_STYLES[ann.category] || CATEGORY_STYLES['General Announcement']
+                        const isUrgent = ann.priority === 'Urgent' || ann.category === 'Urgent Notice'
+
+                        return (
+                          <tr key={ann.id} className="hover:bg-slate-800/40 transition-colors">
+                            <td className="px-6 py-4 max-w-sm">
+                              <div className="font-semibold text-white truncate text-sm">
+                                {ann.title}
+                              </div>
+                              <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-400">
+                                {ann.description}
+                              </p>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-1.5">
+                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold border ${catStyle.badge}`}>
+                                  {ann.category}
+                                </span>
+                                {isUrgent && (
+                                  <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-950 px-1.5 py-0.5 text-[10px] font-bold uppercase text-rose-300 border border-rose-800">
+                                    <Flame className="h-2.5 w-2.5" />
+                                    Urgent
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap font-mono text-xs">
+                              {ann.subjects ? (
+                                <span className="rounded bg-slate-800 px-2 py-0.5 text-slate-200 border border-slate-700">
+                                  {ann.subjects.subject_code}
+                                </span>
+                              ) : (
+                                <span className="text-slate-500">General</span>
+                              )}
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-slate-300">
+                              <div>{ann.sender_name}</div>
+                              {ann.profiles?.login_id && (
+                                <span className="text-[10px] font-mono text-slate-500">
+                                  {ann.profiles.login_id}
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap text-slate-400">
+                              <div>{ann.publication_date || 'Date'}</div>
+                              <div className="text-[10px] text-slate-500">{ann.relative_time}</div>
+                            </td>
+
+                            <td className="px-6 py-4 text-right whitespace-nowrap">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedAdminAnnouncement(ann)}
+                                  className="inline-flex items-center gap-1 rounded bg-slate-800 px-2.5 py-1 text-xs text-slate-300 hover:bg-slate-700 hover:text-white transition-colors border border-slate-700"
+                                >
+                                  <Eye className="h-3 w-3" />
+                                  <span>View</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(e) => handleDeleteAnnouncement(e, ann.id)}
+                                  disabled={deletingAnnouncementId === ann.id}
+                                  className="inline-flex items-center gap-1 rounded bg-rose-950/60 px-2.5 py-1 text-xs text-rose-300 hover:bg-rose-900/70 hover:text-white transition-colors border border-rose-800/80 disabled:opacity-50"
+                                >
+                                  <Trash2 className="h-3 w-3" />
+                                  <span>Delete</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {deleteTarget && (
@@ -1008,6 +1299,22 @@ export default function AdminDashboard() {
           }}
         />
       )}
+
+      <CreateAnnouncementModal
+        isOpen={announcementModalOpen}
+        onClose={() => setAnnouncementModalOpen(false)}
+        currentUser={profile}
+        subjects={subjectsList}
+        onSuccess={() => {
+          loadAdminAnnouncements()
+        }}
+      />
+
+      <NotificationDetailModal
+        isOpen={Boolean(selectedAdminAnnouncement)}
+        notification={selectedAdminAnnouncement}
+        onClose={() => setSelectedAdminAnnouncement(null)}
+      />
     </div>
   )
 }

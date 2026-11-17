@@ -2,8 +2,15 @@ import { useState, useEffect, useCallback } from 'react'
 import Navbar from '../../components/Navbar'
 import AlertBanner from '../../components/AlertBanner'
 import DeleteDraftSessionModal from '../../components/DeleteDraftSessionModal'
+import CreateAnnouncementModal from '../../components/CreateAnnouncementModal'
+import NotificationDetailModal from '../../components/NotificationDetailModal'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import {
+  fetchFacultyAnnouncements,
+  deleteAnnouncement,
+  CATEGORY_STYLES,
+} from '../../services/notificationService'
 import {
   Award,
   BookOpen,
@@ -17,6 +24,8 @@ import {
   FileCheck2,
   UserCheck,
   Trash2,
+  Megaphone,
+  Flame,
 } from 'lucide-react'
 
 export default function FacultyDashboard() {
@@ -26,6 +35,13 @@ export default function FacultyDashboard() {
   const [facultyRecord, setFacultyRecord] = useState(null)
   const [allocatedSubjects, setAllocatedSubjects] = useState([])
   const [loadingInitial, setLoadingInitial] = useState(true)
+
+  // Announcements State
+  const [announcements, setAnnouncements] = useState([])
+  const [loadingAnnouncements, setLoadingAnnouncements] = useState(false)
+  const [announcementModalOpen, setAnnouncementModalOpen] = useState(false)
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null)
+  const [deletingAnnouncementId, setDeletingAnnouncementId] = useState(null)
 
   // Attendance Workflow State
   const [activeSession, setActiveSession] = useState(null)
@@ -44,6 +60,37 @@ export default function FacultyDashboard() {
 
   // Sessions History
   const [recentSessions, setRecentSessions] = useState([])
+
+  // Load faculty's announcements
+  const loadAnnouncements = useCallback(async () => {
+    if (!user?.id) return
+    setLoadingAnnouncements(true)
+    try {
+      const { data, error } = await fetchFacultyAnnouncements(user.id)
+      if (!error && data) {
+        setAnnouncements(data)
+      }
+    } catch (err) {
+      console.error('Error loading announcements:', err)
+    } finally {
+      setLoadingAnnouncements(false)
+    }
+  }, [user])
+
+  const handleDeleteAnnouncement = async (e, id) => {
+    e.stopPropagation()
+    if (!window.confirm('Are you sure you want to delete this announcement?')) return
+    setDeletingAnnouncementId(id)
+    try {
+      await deleteAnnouncement(id)
+      setAnnouncements((prev) => prev.filter((a) => a.id !== id))
+      setStatusSuccess('Announcement deleted successfully.')
+    } catch (err) {
+      setStatusError(`Failed to delete announcement: ${err.message}`)
+    } finally {
+      setDeletingAnnouncementId(null)
+    }
+  }
 
   // Load faculty record and allocated subjects
   const loadFacultyData = useCallback(async (showLoading = false) => {
@@ -101,6 +148,9 @@ export default function FacultyDashboard() {
         if (!sessErr && sessions) {
           setRecentSessions(sessions)
         }
+
+        // 5. Fetch published announcements
+        await loadAnnouncements()
       }
     } catch (err) {
       console.error('Error loading faculty data:', err)
@@ -108,7 +158,7 @@ export default function FacultyDashboard() {
     } finally {
       setLoadingInitial(false)
     }
-  }, [user])
+  }, [user, loadAnnouncements])
 
   useEffect(() => {
     let ignore = false
@@ -160,6 +210,7 @@ export default function FacultyDashboard() {
             }
             if (students) setStudentsRoster(students)
             if (sessions) setRecentSessions(sessions)
+            loadAnnouncements()
           }
         }
       } catch (err) {
@@ -171,7 +222,7 @@ export default function FacultyDashboard() {
 
     initFaculty()
     return () => { ignore = true }
-  }, [user])
+  }, [user, loadAnnouncements])
 
   // Load existing records for the current session
   const loadSessionRecords = async (sessionId) => {
@@ -492,14 +543,25 @@ export default function FacultyDashboard() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => loadFacultyData(false)}
-              className="inline-flex items-center gap-1.5 self-start rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-              <span>Refresh Roster</span>
-            </button>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setAnnouncementModalOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:bg-blue-500 transition-colors"
+              >
+                <Megaphone className="h-3.5 w-3.5" />
+                <span>Post Announcement</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => loadFacultyData(false)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-xs font-medium text-slate-300 hover:border-slate-600 hover:text-white transition-colors"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                <span>Refresh Roster</span>
+              </button>
+            </div>
           </div>
 
           {/* Allocated Subjects Pill List */}
@@ -852,6 +914,103 @@ export default function FacultyDashboard() {
                 )}
               </div>
             </div>
+
+            {/* My Published Announcements Card */}
+            <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <Megaphone className="h-4 w-4 text-emerald-400" />
+                  <h3 className="text-sm font-bold text-white">
+                    My Announcements
+                  </h3>
+                  <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400">
+                    {announcements.length}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setAnnouncementModalOpen(true)}
+                  className="inline-flex items-center gap-1 rounded bg-blue-600/20 px-2 py-1 text-[11px] font-semibold text-blue-400 hover:bg-blue-600/30 transition-colors border border-blue-500/30"
+                >
+                  <PlusCircle className="h-3 w-3" />
+                  <span>New</span>
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                {loadingAnnouncements ? (
+                  <p className="text-xs text-slate-500 text-center py-4">
+                    Loading announcements...
+                  </p>
+                ) : announcements.length === 0 ? (
+                  <div className="text-center py-6">
+                    <Megaphone className="mx-auto h-6 w-6 text-slate-600 mb-1" />
+                    <p className="text-xs text-slate-400 font-medium">No announcements published yet</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Click &quot;New&quot; to publish a classroom or academic notice.
+                    </p>
+                  </div>
+                ) : (
+                  announcements.map((ann) => {
+                    const catStyle = CATEGORY_STYLES[ann.category] || CATEGORY_STYLES['General Announcement']
+                    const isUrgent = ann.priority === 'Urgent' || ann.category === 'Urgent Notice'
+
+                    return (
+                      <div
+                        key={ann.id}
+                        onClick={() => setSelectedAnnouncement(ann)}
+                        className="group cursor-pointer rounded-lg border border-slate-800 bg-slate-900/60 p-3 hover:border-slate-700 transition-colors"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                              <span className={`inline-flex items-center rounded-full px-2 py-0.5 font-semibold border ${catStyle.badge}`}>
+                                {ann.category}
+                              </span>
+                              {isUrgent && (
+                                <span className="inline-flex items-center gap-0.5 rounded-full bg-rose-950 px-1.5 py-0.5 font-bold uppercase text-rose-300 border border-rose-800">
+                                  <Flame className="h-2.5 w-2.5" />
+                                  Urgent
+                                </span>
+                              )}
+                              {ann.subjects && (
+                                <span className="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-slate-300">
+                                  {ann.subjects.subject_code}
+                                </span>
+                              )}
+                            </div>
+                            <h4 className="mt-1.5 text-xs font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
+                              {ann.title}
+                            </h4>
+                            <p className="mt-0.5 line-clamp-1 text-[11px] text-slate-400">
+                              {ann.description}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={(e) => handleDeleteAnnouncement(e, ann.id)}
+                              disabled={deletingAnnouncementId === ann.id}
+                              title="Delete Announcement"
+                              className="rounded p-1 text-slate-500 hover:bg-rose-950 hover:text-rose-400 transition-colors disabled:opacity-50"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 border-t border-slate-800/60 pt-1.5">
+                          <span>{ann.publication_date || 'Date'}</span>
+                          <span>{ann.relative_time}</span>
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -868,6 +1027,24 @@ export default function FacultyDashboard() {
           }
         }}
         onConfirm={handleConfirmDeleteDraft}
+      />
+
+      <CreateAnnouncementModal
+        isOpen={announcementModalOpen}
+        onClose={() => setAnnouncementModalOpen(false)}
+        currentUser={user}
+        subjects={allocatedSubjects}
+        defaultSubjectId={sessionSubject?.id}
+        onSuccess={() => {
+          setStatusSuccess('Announcement published successfully!')
+          loadAnnouncements()
+        }}
+      />
+
+      <NotificationDetailModal
+        isOpen={Boolean(selectedAnnouncement)}
+        notification={selectedAnnouncement}
+        onClose={() => setSelectedAnnouncement(null)}
       />
     </div>
   )
